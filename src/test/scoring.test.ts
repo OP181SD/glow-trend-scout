@@ -36,3 +36,16 @@ describe("score", () => {
     expect(res.find((v) => v.id === "i1")!.score).toBe(res.find((v) => v.id === "t1")!.score);
   });
 });
+
+import { recencyFactor, trendScore } from "@/lib/scoring";
+describe("tendance", () => {
+  const now = new Date("2026-11-07").getTime();
+  it("une vidéo récente passe devant une vieille au même score", () => {
+    expect(trendScore({ score: 80, publishedAt: "2026-11-03" }, now)).toBe(80);
+    expect(trendScore({ score: 80, publishedAt: "2026-01-01" }, now)).toBe(20);
+  });
+  it("paliers de fraîcheur", () => {
+    expect(recencyFactor("2026-10-20", now)).toBe(0.8);
+    expect(recencyFactor("2026-09-01", now)).toBe(0.5);
+  });
+});
