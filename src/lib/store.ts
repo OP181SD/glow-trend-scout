@@ -3,10 +3,10 @@ import type { GeneratedPrompt, Product, Video } from "./types";
 
 export interface Generation { id: string; productId: string; video: Video; result: GeneratedPrompt; createdAt: string }
 export interface SearchEntry { id: string; productId: string; query: string; count: number; createdAt: string }
-interface State { searches: SearchEntry[]; products: Product[]; activeProductId: string | null; videos: Record<string, Video[]>; analyses: number; generations: Generation[] }
+interface State { inspirations: Record<string, string[]>; searches: SearchEntry[]; products: Product[]; activeProductId: string | null; videos: Record<string, Video[]>; analyses: number; generations: Generation[] }
 
 const KEY = "ads-inspirees-v1";
-const EMPTY: State = { searches: [], products: [], activeProductId: null, videos: {}, analyses: 0, generations: [] };
+const EMPTY: State = { inspirations: {}, searches: [], products: [], activeProductId: null, videos: {}, analyses: 0, generations: [] };
 let state: State = EMPTY;
 let loaded = false;
 const subs = new Set<() => void>();
@@ -29,3 +29,11 @@ export function useStore(): State {
   );
 }
 export const activeProduct = (s: State) => s.products.find((p) => p.id === s.activeProductId) ?? null;
+export const MAX_INSPIRATIONS = 3;
+export function toggleInspiration(productId: string, videoId: string): boolean {
+  const cur = state.inspirations[productId] ?? [];
+  if (!cur.includes(videoId) && cur.length >= MAX_INSPIRATIONS) return false;
+  const next = cur.includes(videoId) ? cur.filter((id) => id !== videoId) : [...cur, videoId];
+  setState((s) => ({ ...s, inspirations: { ...s.inspirations, [productId]: next } }));
+  return true;
+}
