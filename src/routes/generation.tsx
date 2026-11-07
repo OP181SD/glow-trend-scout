@@ -14,7 +14,7 @@ export const Route = createFileRoute("/generation")({
   head: () => ({
     meta: [
       { title: "Génération — Ads inspirées" },
-      { name: "description", content: "Récapitulez produit, marque et inspirations, choisissez Veo, Sora, Kling ou Runway et générez votre prompt." },
+      { name: "description", content: "Récapitulez recherche, marque et inspirations, choisissez Veo, Sora, Kling ou Runway et générez votre prompt." },
       { property: "og:title", content: "Génération — Ads inspirées" },
       { property: "og:description", content: "Générez votre prompt vidéo IA à partir de vos inspirations." },
       { property: "og:type", content: "website" },
@@ -37,7 +37,7 @@ function GenerationPage() {
 
   if (!hydrated) return null;
   if (!product) {
-    return <div className="p-12 text-center text-muted-foreground">Aucun produit sélectionné. <Link to="/produits" className="text-primary">Créer un produit</Link></div>;
+    return <div className="p-12 text-center text-muted-foreground">Aucune recherche. <Link to="/produits" className="text-primary">Trouver des inspirations</Link></div>;
   }
   const videos = (s.inspirations[product.id] ?? []).map((id) => getVideo(id, s.videos[product.id] ?? [])).filter((v): v is Video => !!v);
 
@@ -65,7 +65,7 @@ function GenerationPage() {
 
       <div className="mt-8 grid gap-4 md:grid-cols-2">
         <FadeContent className="rounded-[1.75rem] border border-dashed bg-card p-6">
-          <p className="text-xs uppercase tracking-wider text-muted-foreground">Produit</p>
+          <p className="text-xs uppercase tracking-wider text-muted-foreground">Recherche</p>
           <div className="mt-3 flex gap-4">
             {product.imageUrl && <img src={product.imageUrl} alt="" className="h-16 w-16 rounded-2xl object-cover" />}
             <div><p className="text-lg font-bold">{product.name}</p><p className="mt-1 text-sm text-muted-foreground">{product.description}</p></div>
@@ -89,7 +89,7 @@ function GenerationPage() {
           <span className="font-mono text-sm text-muted-foreground">{videos.length}/3</span>
         </div>
         {videos.length === 0 ? (
-          <p className="mt-5 text-muted-foreground">Aucune inspiration choisie. <Link to="/top-videos" className="text-primary">Cochez 1 à 3 vidéos</Link> dans les Top vidéos.</p>
+          <p className="mt-5 text-muted-foreground">Aucune inspiration choisie. <Link to="/top-videos" className="text-primary">Cochez 1 à 3 vidéos</Link> dans les inspirations.</p>
         ) : (
           <div className="mt-5 grid gap-4 sm:grid-cols-3">
             {videos.map((v, i) => (

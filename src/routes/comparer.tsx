@@ -50,7 +50,7 @@ function ComparePage() {
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-12 md:px-10">
-      <Button asChild variant="ghost" className="-ml-3 mb-6 rounded-full"><Link to="/top-videos"><ArrowLeft /> Top vidéos</Link></Button>
+      <Button asChild variant="ghost" className="-ml-3 mb-6 rounded-full"><Link to="/top-videos"><ArrowLeft /> Inspirations</Link></Button>
       <BlurText text="Comparaison côte à côte" className="text-5xl font-bold tracking-tight" />
       {pending > 0 && <ShinyText text={`Analyse de ${pending} vidéo${pending > 1 ? "s" : ""} en cours…`} className="mt-3 block text-sm" />}
       <FadeContent className="mt-8 overflow-x-auto rounded-[2rem] border border-dashed bg-card">

@@ -32,7 +32,7 @@ function Generations() {
       <div className="mt-8 space-y-5">
         {s.generations.map((g, i) => (
           <FadeContent key={g.id} delay={i * 0.06}>
-            <Item g={g} productName={s.products.find((p) => p.id === g.productId)?.name ?? "Produit"} />
+            <Item g={g} productName={s.products.find((p) => p.id === g.productId)?.name ?? "Recherche"} />
           </FadeContent>
         ))}
       </div>

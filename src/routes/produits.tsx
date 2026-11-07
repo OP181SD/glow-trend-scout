@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { ImagePlus, Loader2, Search, Wand2 } from "lucide-react";
-import { BlurText, Stepper } from "@/components/reactbits";
+import { BlurText } from "@/components/reactbits";
 import { PlatformIcon, platformLabel } from "@/components/PlatformIcon";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -17,10 +17,10 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/produits")({
   head: () => ({
     meta: [
-      { title: "Ajouter un produit — Ads inspirées" },
-      { name: "description", content: "Décrivez votre produit, votre marque et le style voulu pour trouver des vidéos d'inspiration." },
-      { property: "og:title", content: "Ajouter un produit — Ads inspirées" },
-      { property: "og:description", content: "Créez un produit en 3 étapes." },
+      { title: "Trouver des inspirations — Ads inspirées" },
+      { name: "description", content: "Tapez ce que vous voulez promouvoir, on trouve les vidéos qui cartonnent." },
+      { property: "og:title", content: "Trouver des inspirations — Ads inspirées" },
+      { property: "og:description", content: "Une recherche, des vidéos qui cartonnent." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
     ],
@@ -62,7 +62,6 @@ function Chip({ active, onClick, children }: { active: boolean; onClick: () => v
 function AddProduct() {
   const navigate = useNavigate();
   const [p, setP] = useState<Product>(blank);
-  const [formKey, setFormKey] = useState(0);
   const [loading, setLoading] = useState(false);
   const [useImage, setUseImage] = useState(true);
   const s = useStore();
@@ -111,62 +110,59 @@ function AddProduct() {
     navigate({ to: "/top-videos" });
   }
 
+  const ready = !!p.name.trim() && !loading;
   return (
-    <div className="mx-auto max-w-3xl px-6 py-12 md:px-10">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <BlurText text="Trouver des inspirations" className="text-5xl font-bold tracking-tight" />
-          <p className="mt-3 text-muted-foreground">3 étapes, 1 minute.</p>
+    <div className="mx-auto max-w-2xl px-6 py-16 md:px-10">
+      <BlurText text="Trouver des inspirations" className="text-5xl font-bold tracking-tight" />
+      <form className="mt-8 space-y-6" onSubmit={(e) => { e.preventDefault(); if (ready) void finish(); }}>
+        <div className="flex items-center gap-2 rounded-full border bg-card p-2 pl-5 focus-within:border-primary">
+          <Search className="h-5 w-5 text-muted-foreground" />
+          <input autoFocus className="flex-1 bg-transparent py-2 text-lg outline-none" value={p.name}
+            onChange={(e) => set({ name: e.target.value, description: e.target.value })} placeholder="Ex. crème anti-âge" />
+          <button type="submit" disabled={!ready} className="inline-flex items-center gap-2 rounded-full bg-primary px-5 py-2.5 text-sm font-medium text-primary-foreground disabled:opacity-50">
+            {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Search className="h-4 w-4" />} Chercher
+          </button>
         </div>
-        <button type="button" onClick={() => { setP(example(p.id)); setFormKey((k) => k + 1); }} className="inline-flex items-center gap-2 rounded-full border border-dashed px-4 py-2 text-sm hover:border-primary">
-          <Wand2 className="h-4 w-4 text-primary" /> Utiliser l'exemple
-        </button>
-      </div>
-      <div className="mt-8">
-        <Stepper key={formKey} steps={["Produit", "Marque", "Style voulu"]} onComplete={finish}
-          canNext={(i) => (i === 0 ? !!p.name.trim() && !!p.description.trim() : !loading)}
-          finishLabel={loading ? <><Loader2 className="h-4 w-4 animate-spin" /> Recherche…</> : <><Search className="h-4 w-4" /> Trouver des inspirations</>}>
-          <div className="space-y-4">
-            <Field label="Nom du produit"><Input className="rounded-2xl" value={p.name} onChange={(e) => set({ name: e.target.value })} placeholder="Crème anti-âge" /></Field>
-            <Field label="Description"><Textarea className="rounded-2xl" rows={4} value={p.description} onChange={(e) => set({ description: e.target.value })} placeholder="Bénéfice clé, pour qui" /></Field>
-            <Field label="Image du produit">
-              <label className="flex cursor-pointer items-center gap-4 rounded-2xl border border-dashed p-4 hover:border-primary">
-                {p.imageUrl ? <img src={p.imageUrl} alt="Aperçu du produit" className="h-16 w-16 rounded-xl object-cover" /> : <span className="flex h-16 w-16 items-center justify-center rounded-xl bg-muted"><ImagePlus className="h-5 w-5 text-muted-foreground" /></span>}
+        <div className="flex flex-wrap items-center gap-2">
+          {(["tiktok", "instagram", "youtube"] as Platform[]).map((pl) => (
+            <Chip key={pl} active={p.style.platform === pl} onClick={() => setStyle({ platform: pl })}><PlatformIcon platform={pl} /> {platformLabel[pl]}</Chip>
+          ))}
+          <button type="button" onClick={() => setP(example(p.id))} className="ml-auto inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-primary">
+            <Wand2 className="h-4 w-4" /> Exemple
+          </button>
+        </div>
+        <details className="rounded-3xl border border-dashed p-5">
+          <summary className="cursor-pointer text-sm text-muted-foreground">Plus d'options (facultatif)</summary>
+          <div className="mt-5 space-y-4">
+            <Field label="Image">
+              <label className="flex cursor-pointer items-center gap-4 rounded-2xl border border-dashed p-3 hover:border-primary">
+                {p.imageUrl ? <img src={p.imageUrl} alt="Aperçu" className="h-12 w-12 rounded-xl object-cover" /> : <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-muted"><ImagePlus className="h-5 w-5 text-muted-foreground" /></span>}
                 <span className="text-sm text-muted-foreground">{p.imageUrl ? "Changer" : "Ajouter une image"}</span>
                 <input type="file" accept="image/*" className="sr-only" onChange={(e) => onImage(e.target.files?.[0])} />
               </label>
               {canUseImage && (
                 <label className="mt-3 flex cursor-pointer items-center gap-3 text-sm">
                   <Checkbox checked={useImage} onCheckedChange={(v) => setUseImage(v === true)} />
-                  Inclure les vidéos visuellement proches
+                  Vidéos visuellement proches
                 </label>
               )}
             </Field>
-          </div>
-          <div className="space-y-4">
-            <Field label="Nom de la marque"><Input className="rounded-2xl" value={p.brand.name} onChange={(e) => setBrand({ name: e.target.value })} /></Field>
+            <Field label="Détails"><Textarea className="rounded-2xl" rows={2} value={p.description} onChange={(e) => set({ description: e.target.value })} placeholder="Bénéfice clé, pour qui" /></Field>
+            <div className="grid gap-4 sm:grid-cols-2">
+              <Field label="Marque"><Input className="rounded-2xl" value={p.brand.name} onChange={(e) => setBrand({ name: e.target.value })} /></Field>
+              <Field label="Cible"><Input className="rounded-2xl" value={p.brand.target} onChange={(e) => setBrand({ target: e.target.value })} /></Field>
+            </div>
             <Field label="Ton">
               <Select value={p.brand.tone} onValueChange={(tone) => setBrand({ tone })}>
                 <SelectTrigger className="rounded-2xl"><SelectValue placeholder="Choisir un ton" /></SelectTrigger>
                 <SelectContent>{TONES.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
               </Select>
             </Field>
-            <Field label="Couleurs"><Input className="rounded-2xl" value={p.brand.colors.join(", ")} onChange={(e) => setBrand({ colors: e.target.value.split(",").map((c) => c.trim()).filter(Boolean) })} /></Field>
-            <Field label="Cible"><Input className="rounded-2xl" value={p.brand.target} onChange={(e) => setBrand({ target: e.target.value })} /></Field>
-          </div>
-          <div className="space-y-5">
             <Field label="Format"><div className="flex flex-wrap gap-2">{FORMATS.map((f) => <Chip key={f} active={p.style.format === f} onClick={() => setStyle({ format: f })}>{f}</Chip>)}</div></Field>
             <Field label="Durée"><div className="flex gap-2">{DURATIONS.map((d) => <Chip key={d} active={p.style.durationSeconds === d} onClick={() => setStyle({ durationSeconds: d })}><span className="font-mono">{d} s</span></Chip>)}</div></Field>
-            <Field label="Plateforme">
-              <div className="flex flex-wrap gap-2">
-                {(["tiktok", "instagram", "youtube"] as Platform[]).map((pl) => (
-                  <Chip key={pl} active={p.style.platform === pl} onClick={() => setStyle({ platform: pl })}><PlatformIcon platform={pl} /> {platformLabel[pl]}</Chip>
-                ))}
-              </div>
-            </Field>
           </div>
-        </Stepper>
-      </div>
+        </details>
+      </form>
     </div>
   );
 }
