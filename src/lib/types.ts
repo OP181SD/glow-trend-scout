@@ -66,4 +66,14 @@ export interface GeneratedPrompt {
   kept: string[];
   original: string[];
   targetTool: TargetTool;
+  shootingScript?: ShootingScript;
+}
+
+export type ShotType = "face caméra" | "gros plan produit" | "mains" | "avant/après" | "plan large";
+export interface ShootingScript {
+  hook: { texte_oral: string; texte_ecran: string; action: string; seconds: number };
+  scenes: { numero: number; duree_s: number; plan: ShotType; action: string; texte_oral: string; texte_ecran: string }[];
+  cta: { texte_oral: string; texte_ecran: string };
+  materiel: string[];
+  conseils: string[];
 }

@@ -72,6 +72,7 @@ export async function generate(product: Product, videos: Video[], tool: TargetTo
   return {
     prompt: out.prompt, kept: out.kept, original: out.original, targetTool: tool,
     scenes: out.scenes, totalSeconds: out.totalSeconds ?? product.style.durationSeconds, music: out.music, cta: out.cta,
+    shootingScript: out.shootingScript,
   };
 }
 

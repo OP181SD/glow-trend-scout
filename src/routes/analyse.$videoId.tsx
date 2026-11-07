@@ -27,7 +27,7 @@ export const Route = createFileRoute("/analyse/$videoId")({
 // Renvoie une URL d'intégration seulement pour les vraies vidéos (identifiants plausibles).
 function embedUrl(v: Video): string | null {
   const tt = v.url.match(/tiktok\.com\/@[^/]+\/video\/(\d{15,})/);
-  if (tt) return `https://www.tiktok.com/embed/v2/${tt[1]}`;
+  if (tt) return `https://www.tiktok.com/player/v1/${tt[1]}?music_info=0&description=0&rel=0`;
   const ig = v.url.match(/instagram\.com\/(?:reel|p)\/([\w-]{8,})/);
   if (ig) return `https://www.instagram.com/reel/${ig[1]}/embed`;
   const yt = v.url.match(/(?:shorts\/|v=|youtu\.be\/)([\w-]{11})/);
@@ -138,7 +138,7 @@ function AnalysePage() {
         <div className="absolute inset-0 scale-125 bg-gradient-to-b from-primary/40 via-accent to-ink blur-3xl" aria-hidden />
         <div className="relative flex h-full items-center justify-center p-8">
           {embed ? (
-            <iframe src={embed} title={`Vidéo de @${v.creator.handle}`} className="aspect-[9/16] w-full max-w-[340px] rounded-[1.75rem] border-0 bg-ink" allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen />
+            <iframe src={embed} title={`Vidéo de @${v.creator.handle}`} className="aspect-[9/16] max-h-[calc(100vh-4rem)] w-full max-w-[380px] overflow-hidden rounded-[1.75rem] border-0 bg-ink shadow-2xl ring-1 ring-border" allow="autoplay; encrypted-media; picture-in-picture" allowFullScreen />
           ) : (
             <a href={v.url} target="_blank" rel="noreferrer" className="group relative flex aspect-[9/16] w-full max-w-[340px] flex-col items-center justify-center overflow-hidden rounded-[1.75rem] border border-dashed bg-ink/70 p-6 text-center">
               {v.thumbnailUrl && <img src={v.thumbnailUrl} alt="" className="absolute inset-0 h-full w-full object-cover opacity-70" />}

@@ -22,7 +22,19 @@ const SceneSchema = z.object({
   title: str.catch(""), start: z.coerce.number().catch(0), end: z.coerce.number().catch(0),
   shot: str.catch(""), visual: str.catch(""), voiceOver: str.catch(""), onScreenText: str.catch(""),
 });
+const Shot = z.enum(["face caméra", "gros plan produit", "mains", "avant/après", "plan large"]).catch("face caméra");
+const ScriptSchema = z.object({
+  hook: z.object({ texte_oral: str.catch(""), texte_ecran: str.catch(""), action: str.catch(""), seconds: z.coerce.number().catch(3) }),
+  scenes: z.array(z.object({
+    numero: z.coerce.number().catch(0), duree_s: z.coerce.number().catch(0), plan: Shot,
+    action: str.catch(""), texte_oral: str.catch(""), texte_ecran: str.catch(""),
+  })),
+  cta: z.object({ texte_oral: str.catch(""), texte_ecran: str.catch("") }),
+  materiel: z.array(str).catch([]),
+  conseils: z.array(str).catch([]),
+});
 const GenerateSchema = z.object({
+  shootingScript: ScriptSchema.optional().catch(undefined),
   prompt: str, kept: z.array(str), original: z.array(str),
   scenes: z.array(SceneSchema).catch([]), totalSeconds: z.coerce.number().optional(),
   music: str.catch(""), cta: str.catch(""),
