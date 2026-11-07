@@ -115,8 +115,8 @@ function AddProduct() {
     <div className="mx-auto max-w-3xl px-6 py-12 md:px-10">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <BlurText text="Nouveau produit" className="text-5xl font-bold tracking-tight" />
-          <p className="mt-3 text-muted-foreground">Trois étapes, puis on cherche les vidéos qui marchent.</p>
+          <BlurText text="Trouver des inspirations" className="text-5xl font-bold tracking-tight" />
+          <p className="mt-3 text-muted-foreground">3 étapes, 1 minute.</p>
         </div>
         <button type="button" onClick={() => { setP(example(p.id)); setFormKey((k) => k + 1); }} className="inline-flex items-center gap-2 rounded-full border border-dashed px-4 py-2 text-sm hover:border-primary">
           <Wand2 className="h-4 w-4 text-primary" /> Utiliser l'exemple
@@ -127,18 +127,18 @@ function AddProduct() {
           canNext={(i) => (i === 0 ? !!p.name.trim() && !!p.description.trim() : !loading)}
           finishLabel={loading ? <><Loader2 className="h-4 w-4 animate-spin" /> Recherche…</> : <><Search className="h-4 w-4" /> Trouver des inspirations</>}>
           <div className="space-y-4">
-            <Field label="Nom du produit"><Input className="rounded-2xl" value={p.name} onChange={(e) => set({ name: e.target.value })} placeholder="Ex. Crème anti-âge au rétinol" /></Field>
-            <Field label="Description"><Textarea className="rounded-2xl" rows={4} value={p.description} onChange={(e) => set({ description: e.target.value })} placeholder="Ce que fait le produit, pour qui, son bénéfice clé" /></Field>
+            <Field label="Nom du produit"><Input className="rounded-2xl" value={p.name} onChange={(e) => set({ name: e.target.value })} placeholder="Crème anti-âge" /></Field>
+            <Field label="Description"><Textarea className="rounded-2xl" rows={4} value={p.description} onChange={(e) => set({ description: e.target.value })} placeholder="Bénéfice clé, pour qui" /></Field>
             <Field label="Image du produit">
               <label className="flex cursor-pointer items-center gap-4 rounded-2xl border border-dashed p-4 hover:border-primary">
                 {p.imageUrl ? <img src={p.imageUrl} alt="Aperçu du produit" className="h-16 w-16 rounded-xl object-cover" /> : <span className="flex h-16 w-16 items-center justify-center rounded-xl bg-muted"><ImagePlus className="h-5 w-5 text-muted-foreground" /></span>}
-                <span className="text-sm text-muted-foreground">{p.imageUrl ? "Changer l'image" : "Choisir une image (JPG, PNG)"}</span>
+                <span className="text-sm text-muted-foreground">{p.imageUrl ? "Changer" : "Ajouter une image"}</span>
                 <input type="file" accept="image/*" className="sr-only" onChange={(e) => onImage(e.target.files?.[0])} />
               </label>
               {canUseImage && (
                 <label className="mt-3 flex cursor-pointer items-center gap-3 text-sm">
                   <Checkbox checked={useImage} onCheckedChange={(v) => setUseImage(v === true)} />
-                  Chercher aussi des vidéos visuellement proches de cette image
+                  Inclure les vidéos visuellement proches
                 </label>
               )}
             </Field>
@@ -151,7 +151,7 @@ function AddProduct() {
                 <SelectContent>{TONES.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
               </Select>
             </Field>
-            <Field label="Couleurs (séparées par des virgules)"><Input className="rounded-2xl" value={p.brand.colors.join(", ")} onChange={(e) => setBrand({ colors: e.target.value.split(",").map((c) => c.trim()).filter(Boolean) })} /></Field>
+            <Field label="Couleurs"><Input className="rounded-2xl" value={p.brand.colors.join(", ")} onChange={(e) => setBrand({ colors: e.target.value.split(",").map((c) => c.trim()).filter(Boolean) })} /></Field>
             <Field label="Cible"><Input className="rounded-2xl" value={p.brand.target} onChange={(e) => setBrand({ target: e.target.value })} /></Field>
           </div>
           <div className="space-y-5">
