@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useHydrated, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import { ArrowRight, Info, Loader2, Save } from "lucide-react";
+import { ArrowRight, BarChart3, Columns3, Info, Loader2, Save } from "lucide-react";
 import { BlurText, FadeContent } from "@/components/reactbits";
 import { PlatformIcon, platformLabel } from "@/components/PlatformIcon";
 import { VideoCard } from "@/components/VideoCard";
@@ -83,6 +83,10 @@ function TopVideos() {
         </p>
         {all && all.length > 0 && (
           <div className="flex items-center gap-3">
+            <Button asChild size="sm" variant="outline" className="rounded-full border-dashed"><Link to="/insights"><BarChart3 /> Insights</Link></Button>
+            <Button asChild size="sm" variant="outline" className="rounded-full border-dashed" disabled={picked.length < 2}>
+              <Link to="/comparer" disabled={picked.length < 2}><Columns3 /> Comparer</Link>
+            </Button>
             <Button size="sm" variant="outline" className="rounded-full border-dashed" disabled={saving} onClick={saveDemo}>
               {saving ? <Loader2 className="animate-spin" /> : <Save />} Enregistrer pour la démo
             </Button>
