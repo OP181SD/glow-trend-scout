@@ -8,8 +8,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
-import { search, SearchFailed } from "@/lib/api";
-import { getState, setState } from "@/lib/store";
+import { Checkbox } from "@/components/ui/checkbox";
+import { imageForSearch, search, SearchFailed } from "@/lib/api";
+import { getState, setState, useStore } from "@/lib/store";
 import type { Platform, Product } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -63,6 +64,10 @@ function AddProduct() {
   const [p, setP] = useState<Product>(blank);
   const [formKey, setFormKey] = useState(0);
   const [loading, setLoading] = useState(false);
+  const [useImage, setUseImage] = useState(true);
+  const s = useStore();
+  // Masquée si Oriane a déjà refusé une image, en mode démo, ou si le format n'est pas JPG/PNG/WebP.
+  const canUseImage = !s.imageSearchUnsupported && !s.demoMode && !!imageForSearch(p.imageUrl);
   const set = (patch: Partial<Product>) => setP({ ...p, ...patch });
   const setBrand = (patch: Partial<Product["brand"]>) => set({ brand: { ...p.brand, ...patch } });
   const setStyle = (patch: Partial<Product["style"]>) => set({ style: { ...p.style, ...patch } });
@@ -79,7 +84,12 @@ function AddProduct() {
     const product = { ...p, createdAt: new Date().toISOString() };
     let videos;
     try {
-      ({ videos } = await search(product, { demo: getState().demoMode }));
+      const res = await search(product, { demo: getState().demoMode, useImage: canUseImage && useImage });
+      videos = res.videos;
+      if (res.imageUnsupported) {
+        setState((st) => ({ ...st, imageSearchUnsupported: true }));
+        toast.info("La recherche par image n'est pas disponible : résultats trouvés avec la description seule.");
+      }
     } catch (e) {
       setLoading(false);
       const demoOn = getState().demoMode;
@@ -125,6 +135,12 @@ function AddProduct() {
                 <span className="text-sm text-muted-foreground">{p.imageUrl ? "Changer l'image" : "Choisir une image (JPG, PNG)"}</span>
                 <input type="file" accept="image/*" className="sr-only" onChange={(e) => onImage(e.target.files?.[0])} />
               </label>
+              {canUseImage && (
+                <label className="mt-3 flex cursor-pointer items-center gap-3 text-sm">
+                  <Checkbox checked={useImage} onCheckedChange={(v) => setUseImage(v === true)} />
+                  Chercher aussi des vidéos visuellement proches de cette image
+                </label>
+              )}
             </Field>
           </div>
           <div className="space-y-4">
