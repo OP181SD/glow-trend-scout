@@ -14,7 +14,131 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      analyses: {
+        Row: {
+          created_at: string
+          data: Json
+          id: string
+          video_id: string
+        }
+        Insert: {
+          created_at?: string
+          data: Json
+          id?: string
+          video_id: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          id?: string
+          video_id?: string
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          created_at: string
+          data: Json
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          data: Json
+          id: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          id?: string
+        }
+        Relationships: []
+      }
+      prompts: {
+        Row: {
+          created_at: string
+          data: Json
+          id: string
+          product_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          data: Json
+          id?: string
+          product_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          id?: string
+          product_id?: string | null
+        }
+        Relationships: []
+      }
+      searches: {
+        Row: {
+          created_at: string
+          data: Json
+          id: string
+          platform: string | null
+          query: string
+          source: string
+        }
+        Insert: {
+          created_at?: string
+          data?: Json
+          id?: string
+          platform?: string | null
+          query: string
+          source?: string
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          id?: string
+          platform?: string | null
+          query?: string
+          source?: string
+        }
+        Relationships: []
+      }
+      videos: {
+        Row: {
+          created_at: string
+          data: Json
+          id: string
+          platform: string | null
+          query: string | null
+          score: number | null
+          search_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          data: Json
+          id: string
+          platform?: string | null
+          query?: string | null
+          score?: number | null
+          search_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          data?: Json
+          id?: string
+          platform?: string | null
+          query?: string | null
+          score?: number | null
+          search_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "videos_search_id_fkey"
+            columns: ["search_id"]
+            isOneToOne: false
+            referencedRelation: "searches"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
