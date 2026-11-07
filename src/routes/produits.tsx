@@ -44,7 +44,7 @@ const example = (id: string): Product => ({
   description: "Crème anti-âge au rétinol encapsulé et peptides, texture fondante, pour lisser les rides en 4 semaines.",
   imageUrl: "",
   brand: { name: "Maison Aube", tone: "chaleureux et expert", colors: ["bleu nuit", "blanc", "argent"], target: "femmes de 40 à 60 ans" },
-  style: { format: "UGC", durationSeconds: 30, platform: "tiktok" },
+  style: { format: "UGC", durationSeconds: 30 },
 });
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
