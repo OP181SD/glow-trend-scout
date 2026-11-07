@@ -10,8 +10,10 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ComparerRouteImport } from './routes/comparer'
 import { Route as GenerationRouteImport } from './routes/generation'
 import { Route as GenerationsRouteImport } from './routes/generations'
+import { Route as InsightsRouteImport } from './routes/insights'
 import { Route as ProduitsRouteImport } from './routes/produits'
 import { Route as TopVideosRouteImport } from './routes/top-videos'
 import { Route as AnalyseVideoIdRouteImport } from './routes/analyse.$videoId'
@@ -22,6 +24,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ComparerRoute = ComparerRouteImport.update({
+  id: '/comparer',
+  path: '/comparer',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const GenerationRoute = GenerationRouteImport.update({
   id: '/generation',
   path: '/generation',
@@ -30,6 +37,11 @@ const GenerationRoute = GenerationRouteImport.update({
 const GenerationsRoute = GenerationsRouteImport.update({
   id: '/generations',
   path: '/generations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const InsightsRoute = InsightsRouteImport.update({
+  id: '/insights',
+  path: '/insights',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProduitsRoute = ProduitsRouteImport.update({
@@ -55,8 +67,10 @@ const PromptIdRoute = PromptIdRouteImport.update({
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/comparer': typeof ComparerRoute
   '/generation': typeof GenerationRoute
   '/generations': typeof GenerationsRoute
+  '/insights': typeof InsightsRoute
   '/produits': typeof ProduitsRoute
   '/top-videos': typeof TopVideosRoute
   '/analyse/$videoId': typeof AnalyseVideoIdRoute
@@ -64,8 +78,10 @@ export interface FileRoutesByFullPath {
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/comparer': typeof ComparerRoute
   '/generation': typeof GenerationRoute
   '/generations': typeof GenerationsRoute
+  '/insights': typeof InsightsRoute
   '/produits': typeof ProduitsRoute
   '/top-videos': typeof TopVideosRoute
   '/analyse/$videoId': typeof AnalyseVideoIdRoute
@@ -74,8 +90,10 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/comparer': typeof ComparerRoute
   '/generation': typeof GenerationRoute
   '/generations': typeof GenerationsRoute
+  '/insights': typeof InsightsRoute
   '/produits': typeof ProduitsRoute
   '/top-videos': typeof TopVideosRoute
   '/analyse/$videoId': typeof AnalyseVideoIdRoute
@@ -85,8 +103,10 @@ export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
+    | '/comparer'
     | '/generation'
     | '/generations'
+    | '/insights'
     | '/produits'
     | '/top-videos'
     | '/analyse/$videoId'
@@ -94,8 +114,10 @@ export interface FileRouteTypes {
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
+    | '/comparer'
     | '/generation'
     | '/generations'
+    | '/insights'
     | '/produits'
     | '/top-videos'
     | '/analyse/$videoId'
@@ -103,8 +125,10 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/comparer'
     | '/generation'
     | '/generations'
+    | '/insights'
     | '/produits'
     | '/top-videos'
     | '/analyse/$videoId'
@@ -113,8 +137,10 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  ComparerRoute: typeof ComparerRoute
   GenerationRoute: typeof GenerationRoute
   GenerationsRoute: typeof GenerationsRoute
+  InsightsRoute: typeof InsightsRoute
   ProduitsRoute: typeof ProduitsRoute
   TopVideosRoute: typeof TopVideosRoute
   AnalyseVideoIdRoute: typeof AnalyseVideoIdRoute
@@ -130,6 +156,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/comparer': {
+      id: '/comparer'
+      path: '/comparer'
+      fullPath: '/comparer'
+      preLoaderRoute: typeof ComparerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/generation': {
       id: '/generation'
       path: '/generation'
@@ -142,6 +175,13 @@ declare module '@tanstack/react-router' {
       path: '/generations'
       fullPath: '/generations'
       preLoaderRoute: typeof GenerationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/insights': {
+      id: '/insights'
+      path: '/insights'
+      fullPath: '/insights'
+      preLoaderRoute: typeof InsightsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/produits': {
@@ -177,8 +217,10 @@ declare module '@tanstack/react-router' {
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  ComparerRoute: ComparerRoute,
   GenerationRoute: GenerationRoute,
   GenerationsRoute: GenerationsRoute,
+  InsightsRoute: InsightsRoute,
   ProduitsRoute: ProduitsRoute,
   TopVideosRoute: TopVideosRoute,
   AnalyseVideoIdRoute: AnalyseVideoIdRoute,
