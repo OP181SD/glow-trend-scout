@@ -148,3 +148,9 @@
 }
 @keyframes aurora { from { transform: translateX(-6%) scale(1); } to { transform: translateX(6%) scale(1.1); } }
 @media (prefers-reduced-motion: reduce) { .aurora::before, .shiny-text { animation: none; } }
+
+@font-face {
+  font-family: "Departure Mono";
+  src: url("/fonts/DepartureMono-Regular.woff2") format("woff2");
+  font-display: swap;
+}
