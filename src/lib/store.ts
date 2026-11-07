@@ -30,6 +30,22 @@ export function useStore(): State {
   );
 }
 export const activeProduct = (s: State) => s.products.find((p) => p.id === s.activeProductId) ?? null;
+/** Supprime un dossier et tout ce qui s'y rattache (vidéos, inspirations, recherches, générations). */
+export function deleteProduct(productId: string) {
+  setState((s) => {
+    const videos = { ...s.videos }; delete videos[productId];
+    const inspirations = { ...s.inspirations }; delete inspirations[productId];
+    return {
+      ...s,
+      products: s.products.filter((p) => p.id !== productId),
+      videos,
+      inspirations,
+      searches: s.searches.filter((r) => r.productId !== productId),
+      generations: s.generations.filter((g) => g.productId !== productId),
+      activeProductId: s.activeProductId === productId ? null : s.activeProductId,
+    };
+  });
+}
 export const MAX_INSPIRATIONS = 3;
 export function toggleInspiration(productId: string, videoId: string): boolean {
   const cur = state.inspirations[productId] ?? [];
