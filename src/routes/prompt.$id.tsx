@@ -44,7 +44,7 @@ function PromptPage() {
   async function regenerate() {
     if (!g || !product) return;
     setRegen(true);
-    const result = await generate(product, g.videos.map((video) => ({ video, analysis: getAnalysis(video.id)! })), r.targetTool, variant);
+    const result = await generate(product, g.videos.map((video) => ({ video, analysis: getAnalysis(video.id, video)! })), r.targetTool, variant);
     setVariant((v) => v + 1);
     setState((st) => ({ ...st, generations: st.generations.map((x) => (x.id === g.id ? { ...x, result, createdAt: new Date().toISOString() } : x)) }));
     setRegen(false);

@@ -37,12 +37,12 @@ function GenerationPage() {
   if (!product) {
     return <div className="p-12 text-center text-muted-foreground">Aucun produit sélectionné. <Link to="/produits" className="text-primary">Créer un produit</Link></div>;
   }
-  const videos = (s.inspirations[product.id] ?? []).map(getVideo).filter((v): v is Video => !!v);
+  const videos = (s.inspirations[product.id] ?? []).map((id) => getVideo(id, s.videos[product.id] ?? [])).filter((v): v is Video => !!v);
 
   async function run() {
     if (!product) return;
     setLoading(true);
-    const result = await generate(product, videos.map((video) => ({ video, analysis: getAnalysis(video.id)! })), tool);
+    const result = await generate(product, videos.map((video) => ({ video, analysis: getAnalysis(video.id, video)! })), tool);
     const id = crypto.randomUUID();
     setState((st) => ({ ...st, generations: [{ id, productId: product.id, videos, result, createdAt: new Date().toISOString() }, ...st.generations] }));
     setLoading(false);

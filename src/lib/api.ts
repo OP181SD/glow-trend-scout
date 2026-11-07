@@ -5,23 +5,45 @@ const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 const clean = (t: string) => t.replace(/[«»"]/g, "").trim();
 
 // Pour l'instant : données fictives. À remplacer par les vraies sources plus tard.
-export async function search(_product: Product): Promise<Video[]> {
-  await wait(900);
+export async function search(product: Product, limit = 10): Promise<Video[]> {
+  const { searchVideos } = await import("./search.functions");
+  try {
+    const res = await searchVideos({ data: { query: product.description || product.name, limit } });
+    if (res.videos.length) return res.videos;
+  } catch {
+    /* on retombe sur les exemples ci-dessous */
+  }
   return [...MOCK_VIDEOS].sort((a, b) => b.score - a.score);
 }
 
 export async function analyze(video: Video): Promise<Analysis> {
   await wait(700);
-  const a = MOCK_ANALYSES[video.id];
-  if (!a) throw new Error("Analyse introuvable");
-  return a;
+  return getAnalysis(video.id, video)!;
 }
 
-export function getVideo(id: string): Video | undefined {
-  return MOCK_VIDEOS.find((v) => v.id === id);
+export function getVideo(id: string, extra: Video[] = []): Video | undefined {
+  return extra.find((v) => v.id === id) ?? MOCK_VIDEOS.find((v) => v.id === id);
 }
-export function getAnalysis(id: string): Analysis | undefined {
-  return MOCK_ANALYSES[id];
+
+/** Analyse fictive : celle des exemples, sinon déduite simplement du texte de la vidéo. */
+export function getAnalysis(id: string, video?: Video): Analysis | undefined {
+  const known = MOCK_ANALYSES[id];
+  if (known || !video) return known;
+  const text = `${video.caption} ${video.transcript}`.toLowerCase();
+  const format: Analysis["format"] = /avant|après|jour 1|before|after/.test(text) ? "avant/après" : /routine|tuto|comment|étape/.test(text) ? "tutoriel" : /avis|test|j'ai testé|review/.test(text) ? "témoignage" : /unboxing|colis|haul/.test(text) ? "unboxing" : "UGC";
+  const firstLine = (video.onScreenText[0] || video.transcript.split(/[.!?]/)[0] || video.caption.split("\n")[0] || "Accroche visuelle").trim().slice(0, 120);
+  const caption = video.caption.split("\n")[0]?.slice(0, 140) || "Vidéo courte centrée sur le produit";
+  return {
+    concept: caption,
+    format,
+    hook: { description: firstLine, seconds: 2, type: /\?/.test(firstLine) ? "question" : "visuel" },
+    message: caption,
+    storytelling: ["Accroche immédiate face caméra", "Démonstration ou explication du produit", "Résultat et appel à l'action"],
+    visual_style: video.platform === "instagram" ? "Reel vertical soigné, lumière naturelle" : "Vidéo verticale filmée au téléphone, montage rapide",
+    cta: "« Lien en bio »",
+    why_it_works: [`Engagement de ${video.engagementRate.toLocaleString("fr-FR", { maximumFractionDigits: 1 })} %`, `${new Intl.NumberFormat("fr-FR", { notation: "compact" }).format(video.views)} vues`, "Format natif de la plateforme"],
+    brandMatch: { score: Math.min(95, Math.max(40, video.score)), reason: "Estimation basée sur le score de la vidéo (analyse fictive)." },
+  };
 }
 
 const MUSIC = ["Lo-fi douce et lumineuse, 90 BPM, montée légère à la révélation", "Piano minimaliste puis beat acoustique discret", "Pop acoustique chaleureuse, claps légers sur les coupes"];
