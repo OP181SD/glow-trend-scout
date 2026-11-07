@@ -30,6 +30,9 @@ export function getVideo(id: string, extra: Video[] = []): Video | undefined {
   return extra.find((v) => v.id === id);
 }
 
+// L'image n'est pas utile à l'IA : on ne l'envoie pas (requêtes plus légères).
+const lite = (p: Product): Product => ({ ...p, imageUrl: "" });
+
 // Analyses déjà obtenues pendant la session (clé = id de la vidéo).
 const done = new Map<string, Analysis>();
 const pending = new Map<string, Promise<Analysis>>();
@@ -48,7 +51,7 @@ export function analyze(video: Video, product: Product, demo: boolean): Promise<
         if (stored) return stored;
       }
       try {
-        return await analyzeVideo({ data: { video, product } });
+        return await analyzeVideo({ data: { video, product: lite(product) } });
       } catch (e) {
         const stored = await getStoredAnalysis({ data: { videoId: video.id } }).catch(() => null);
         if (stored) return stored;
@@ -65,7 +68,7 @@ export async function generate(product: Product, videos: Video[], tool: TargetTo
   if (videos.length === 0) throw new Error("Choisissez au moins une inspiration");
   const analyses = await Promise.all(videos.map((v) => analyze(v, product, demo)));
   const { generateAdPrompt } = await import("./ai.functions");
-  const out = await generateAdPrompt({ data: { product, analyses, tool } });
+  const out = await generateAdPrompt({ data: { product: lite(product), analyses, tool } });
   return {
     prompt: out.prompt, kept: out.kept, original: out.original, targetTool: tool,
     scenes: out.scenes, totalSeconds: out.totalSeconds ?? product.style.durationSeconds, music: out.music, cta: out.cta,

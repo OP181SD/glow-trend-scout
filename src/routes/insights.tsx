@@ -44,7 +44,7 @@ function InsightsPage() {
   const hydrated = useHydrated();
   const product = activeProduct(s);
   const videos = product ? s.videos[product.id] ?? [] : [];
-  const { analyses, pending } = useAnalyses(videos, product, s.demoMode);
+  const { analyses, pending, failed } = useAnalyses(videos, product, s.demoMode);
 
   if (!hydrated) return null;
   if (!product || videos.length === 0) {
@@ -64,6 +64,7 @@ function InsightsPage() {
       <BlurText text="Insights de la recherche" className="mt-2 text-5xl font-bold tracking-tight" />
       <p className="mt-3 text-sm text-muted-foreground">« Meilleures vidéos » = la moitié du haut du classement (<span className="font-mono">{r.topCount}</span> sur <span className="font-mono">{videos.length}</span>).</p>
       {pending > 0 && <ShinyText text={`Analyse de ${pending} vidéo${pending > 1 ? "s" : ""} en cours…`} className="mt-2 block text-sm" />}
+      {failed > 0 && <p className="mt-2 text-sm text-muted-foreground"><span className="font-mono">{failed}</span> analyse{failed > 1 ? "s" : ""} n'a pas abouti : statistiques calculées sans elle{failed > 1 ? "s" : ""}.</p>}
 
       <div className="mt-8 grid gap-4 md:grid-cols-3">
         <FadeContent className="rounded-[1.75rem] border border-dashed bg-card p-6 md:col-span-1">
