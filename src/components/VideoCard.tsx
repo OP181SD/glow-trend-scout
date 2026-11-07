@@ -29,12 +29,12 @@ export function VideoCard({ v, format, selected, onClick, inspiration }: Props) 
   const vfr = viewsPerFollower(v);
   const tier = attractionTier(vfr);
   return (
-    <SpotlightCard className={cn("aspect-[9/16] transition-colors", selected && "border-solid border-primary")}>
+    <SpotlightCard className={cn("aspect-[9/16] text-ink-foreground transition-colors", selected && "border-solid border-primary")}>
       {/* Miniature */}
       {v.thumbnailUrl ? (
         <img src={v.thumbnailUrl} alt={`Miniature de @${v.creator.handle}`} className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
       ) : (
-        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-accent/70 via-card to-ink p-6">
+        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-b from-primary/60 to-ink p-6">
           <p className="text-center text-xl font-bold leading-tight">« {hook} »</p>
         </div>
       )}
