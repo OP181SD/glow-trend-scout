@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import type { ShootingScript } from "@/lib/types";
 import { downloadBlob, scriptToPdf, scriptToText } from "@/lib/script-export";
 
-export function ShootingScriptView({ script, title, onRegenerate }: { script?: ShootingScript; title: string; onRegenerate: () => void }) {
+export function ShootingScriptView({ script, title, onRegenerate }: { script?: ShootingScript | undefined; title: string; onRegenerate: () => void }) {
   const [copied, setCopied] = useState(false);
   const [pdf, setPdf] = useState<Blob | null>(null);
 

@@ -66,7 +66,7 @@ export interface GeneratedPrompt {
   kept: string[];
   original: string[];
   targetTool: TargetTool;
-  shootingScript?: ShootingScript;
+  shootingScript?: ShootingScript | undefined;
 }
 
 export type ShotType = "face caméra" | "gros plan produit" | "mains" | "avant/après" | "plan large";
