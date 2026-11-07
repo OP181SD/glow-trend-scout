@@ -1,30 +1,20 @@
-// Seul fichier qui connaît l'API Anthropic. La clé est lue côté serveur uniquement.
-const URL = "https://api.anthropic.com/v1/messages";
+// Seul fichier qui sait appeler Claude (via la passerelle IA intégrée, côté serveur uniquement).
+import { generateMessage } from "@lovable.dev/ai-gateway";
+
+const MODEL = "anthropic/claude-sonnet-5" as const;
 
 async function callClaude(system: string, user: string): Promise<string> {
-  const key = process.env["ANTHROPIC_API_KEY"];
-  if (!key) throw new Error("ANTHROPIC_API_KEY manquante");
-  const model = process.env["ANTHROPIC_MODEL"] || "claude-sonnet-5-5";
-  let res: Response;
-  try {
-    res = await fetch(URL, {
-      method: "POST",
-      headers: { "x-api-key": key, "anthropic-version": "2023-06-01", "content-type": "application/json" },
-      body: JSON.stringify({ model, max_tokens: 4096, system, messages: [{ role: "user", content: user }] }),
-    });
-  } catch {
-    throw new Error("Claude injoignable");
-  }
-  if (!res.ok) {
-    console.error("Claude HTTP", res.status);
-    throw new Error(`Claude a répondu ${res.status}`);
-  }
-  const json = (await res.json()) as { content?: { type: string; text?: string }[] };
-  return (json.content ?? []).filter((c) => c.type === "text").map((c) => c.text ?? "").join("");
+  const res = await generateMessage({
+    model: MODEL,
+    max_tokens: 4096,
+    system,
+    messages: [{ role: "user", content: user }],
+  });
+  return res.content.map((c) => (c.type === "text" ? c.text : "")).join("");
 }
 
 function parseJson(text: string): unknown {
-  const t = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/```$/, "").trim();
+  const t = text.trim().replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/, "").trim();
   return JSON.parse(t);
 }
 
