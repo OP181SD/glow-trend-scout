@@ -68,7 +68,7 @@ export function normalizeOriane(r: OrianeResult): RawVideo | null {
 }
 
 export async function searchOriane(input: OrianeSearchInput): Promise<RawVideo[]> {
-  let baseUrl = process.env["ORIANE_API_URL"]?.trim();
+  let baseUrl = process.env["ORIANE_API_URL"]?.replace(/\s+/g, "");
   const apiKey = process.env["ORIANE_API_KEY"]?.trim();
   if (!baseUrl || !apiKey) throw new Error("Oriane non configuré");
   if (!/^https?:\/\//.test(baseUrl)) baseUrl = `https://${baseUrl}`;
