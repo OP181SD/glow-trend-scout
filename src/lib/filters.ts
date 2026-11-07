@@ -5,15 +5,19 @@ const DAY = 86_400_000;
 const text = (v: Video) => `${v.caption} ${v.transcript} ${v.onScreenText.join(" ")} ${v.hashtags.map((h) => `#${h}`).join(" ")}`.toLowerCase();
 const has = (t: string, words: string[]) => words.some((w) => t.includes(w));
 
-/** Shadow reach : part de la portée hors abonnés.
- * "viral" = vues ≥ 2× abonnés ; "bridee" = vues < 5 % des abonnés (portée possiblement limitée par l'algorithme). */
-export type ShadowReach = "viral" | "normal" | "bridee" | "inconnu";
+/** Shadow reach = pub non déclarée : la vidéo vend une marque (dans ce qui est dit ou écrit à l'écran)
+ * sans aucune mention de partenariat ni de marque dans la légende et les hashtags. */
+export type ShadowReach = "cachee" | "declaree" | "aucune";
+const DISCLOSURE = ["#ad", "#ads", "#pub", "#sponsor", "sponsorisé", "sponsored", "partenariat", "paid partnership", "#collab", "#gifted", "offert par", "en collaboration"];
+const PROMO = ["code promo", "code ", "lien en bio", "link in bio", "-20", "-30", "-50", "% de réduction", "discount", "j'utilise", "i use", "je vous recommande", "je recommande", "mon produit préféré", "holy grail", "ce produit", "this product", "la marque", "the brand", "disponible", "available at", "sephora", "amazon"];
 export function shadowReach(v: Video): ShadowReach {
-  if (!v.creator.followers) return "inconnu";
-  const r = v.views / v.creator.followers;
-  if (r >= 2) return "viral";
-  if (r < 0.05) return "bridee";
-  return "normal";
+  const declared = `${v.caption} ${v.hashtags.map((h) => `#${h}`).join(" ")}`.toLowerCase();
+  if (has(declared + " ", DISCLOSURE)) return "declaree";
+  const spoken = `${v.transcript} ${v.onScreenText.join(" ")}`.toLowerCase();
+  // Marque ou appel à l'achat dans la vidéo, mais rien dans la légende.
+  const brandInVideo = /@[a-z0-9_.]{3,}|\b[A-Z][a-z]+ ?(?:Paris|Skin|Beauty|Lab|Cosmetics)\b/.test(`${v.transcript} ${v.onScreenText.join(" ")}`);
+  const promoHits = PROMO.filter((w) => spoken.includes(w)).length;
+  return promoHits >= 2 || (promoHits >= 1 && brandInVideo) ? "cachee" : "aucune";
 }
 
 export type ContentType = "ads" | "sketch" | "tutoriel" | "avant-apres" | "temoignage" | "ugc";

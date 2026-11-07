@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 type Opt<K extends keyof Filters> = { key: K; label: string; options: [Filters[K], string][] };
 const groups: Opt<keyof Filters>[] = [
-  { key: "reach", label: "Shadow reach", options: [["all", "Tous"], ["viral", "Viral hors abo"], ["normal", "Normal"], ["bridee", "Portée bridée"]] },
+  { key: "reach", label: "Shadow reach", options: [["all", "Toutes"], ["cachee", "Pub cachée"], ["declaree", "Pub déclarée"], ["aucune", "Sans pub"]] },
   { key: "period", label: "Période", options: [["all", "Tout"], ["7", "7 j"], ["30", "30 j"], ["90", "3 mois"], ["365", "1 an"]] },
   { key: "lang", label: "Langue / zone", options: [["all", "Toutes"], ["fr", "🇫🇷 Français"], ["en", "🇬🇧 Anglais"], ["es", "🇪🇸 Espagnol"]] },
   { key: "type", label: "Type", options: [["all", "Tous"], ["ads", "Ads"], ["sketch", "Sketch"], ["tutoriel", "Tuto"], ["avant-apres", "Avant/après"], ["temoignage", "Avis"], ["ugc", "UGC"]] },
