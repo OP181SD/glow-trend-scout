@@ -4,6 +4,15 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import type { Video } from "@/lib/types";
 import { cn } from "@/lib/utils";
+import { attractionTier, viewsPerFollower, type AttractionTier } from "@/lib/scoring";
+import { Eye, Heart } from "lucide-react";
+
+const tierLabel: Record<AttractionTier, string> = {
+  pepite: "Pépite virale",
+  breakout: "Sort de sa commu",
+  audience: "Reste dans sa commu",
+  inconnu: "Attraction",
+};
 
 export const fmt = (n: number) => new Intl.NumberFormat("fr-FR", { notation: "compact", maximumFractionDigits: 1 }).format(n);
 
@@ -17,6 +26,8 @@ interface Props {
 
 export function VideoCard({ v, format, selected, onClick, inspiration }: Props) {
   const hook = v.onScreenText[0]?.replace(/[«»"]/g, "").trim();
+  const vfr = viewsPerFollower(v);
+  const tier = attractionTier(vfr);
   return (
     <SpotlightCard className={cn("aspect-[9/16] transition-colors", selected && "border-solid border-primary")}>
       {/* Miniature */}
@@ -40,19 +51,25 @@ export function VideoCard({ v, format, selected, onClick, inspiration }: Props) 
         </div>
 
         <div>
-          <p className="mb-2 truncate text-sm font-medium">@{v.creator.handle}</p>
-          <div className="grid grid-cols-3 gap-2 border-t border-dashed pt-2.5 text-xs">
-            <div><div className="text-muted-foreground">vues</div><CountUp to={v.views} /></div>
-            <div><div className="text-muted-foreground">eng.</div><CountUp to={v.engagementRate} decimals={1} suffix="%" /></div>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <div className="pointer-events-auto cursor-help">
-                  <div className="text-muted-foreground underline decoration-dashed underline-offset-2">score</div>
-                  <span className="text-primary"><CountUp to={v.score} /><span className="font-mono text-muted-foreground">/100</span></span>
+          <div className="mb-2 flex items-center justify-between gap-2">
+            <p className="truncate text-sm font-medium">@{v.creator.handle}</p>
+            {vfr !== null && <span className="shrink-0 font-mono text-[10px] text-muted-foreground">{fmt(v.creator.followers)} abo</span>}
+          </div>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="pointer-events-auto mb-2 flex cursor-help items-end justify-between rounded-2xl bg-ink/80 px-3 py-2">
+                <div>
+                  <div className="text-[10px] uppercase tracking-wider text-muted-foreground">{tierLabel[tier]}</div>
+                  <span className="font-mono text-2xl leading-none text-primary">{vfr === null ? "—" : <CountUp to={vfr} decimals={vfr < 10 ? 1 : 0} suffix="×" />}</span>
                 </div>
-              </TooltipTrigger>
-              <TooltipContent className="max-w-56">{v.scoreReason}</TooltipContent>
-            </Tooltip>
+                <span className="font-mono text-lg leading-none"><CountUp to={v.score} /><span className="text-[10px] text-muted-foreground">/100</span></span>
+              </div>
+            </TooltipTrigger>
+            <TooltipContent className="max-w-56">{v.scoreReason}</TooltipContent>
+          </Tooltip>
+          <div className="flex gap-3 border-t border-dashed pt-2 font-mono text-xs">
+            <span className="inline-flex items-center gap-1"><Eye className="h-3 w-3 text-muted-foreground" /><CountUp to={v.views} /></span>
+            <span className="inline-flex items-center gap-1"><Heart className="h-3 w-3 text-muted-foreground" /><CountUp to={v.engagementRate} decimals={1} suffix="%" /></span>
           </div>
           {inspiration && (
             <label className={cn("pointer-events-auto mt-3 flex cursor-pointer items-center gap-2 rounded-full bg-ink/80 px-3 py-1.5 text-xs", inspiration.disabled && "cursor-not-allowed opacity-50")}>
