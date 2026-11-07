@@ -86,7 +86,7 @@ function AddProduct() {
       toast.error(e instanceof SearchFailed ? e.message : "La recherche a échoué.", {
         description: demoOn ? "Aucune vidéo enregistrée pour la démo." : "Passez en mode démo pour utiliser les vidéos déjà enregistrées.",
         duration: 12000,
-        ...(demoOn ? {} : { action: { label: "Passer en mode démo", onClick: () => { setState((st) => ({ ...st, demoMode: true })); void find(); } } }),
+        ...(demoOn ? {} : { action: { label: "Passer en mode démo", onClick: () => { setState((st) => ({ ...st, demoMode: true })); void finish(); } } }),
       });
       return;
     }
