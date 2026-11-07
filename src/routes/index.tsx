@@ -24,13 +24,6 @@ function Dashboard() {
   const s = useStore();
   const navigate = useNavigate();
   const allVideos = Object.values(s.videos).flat();
-  const views = allVideos.reduce((a, v) => a + v.views, 0);
-  const metrics = [
-    { label: "Recherches", value: s.products.length },
-    { label: "Vidéos trouvées", value: allVideos.length },
-    { label: "Analyses", value: s.analyses },
-    { label: "Générations", value: s.generations.length },
-  ];
   return (
     <div className="relative">
       <OrbitHero>
@@ -44,19 +37,7 @@ function Dashboard() {
         </FadeContent>
       </OrbitHero>
       <div className="relative mx-auto max-w-6xl px-6 pb-12 md:px-10">
-        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-          {metrics.map((m, i) => (
-            <FadeContent key={m.label} delay={0.5 + i * 0.08} className="rounded-[1.75rem] border border-dashed bg-card/70 p-5 backdrop-blur">
-              <p className="text-sm text-muted-foreground">{m.label}</p>
-              <CountUp to={m.value} className="mt-2 block text-4xl" />
-            </FadeContent>
-          ))}
-        </div>
-        {views > 0 && (
-          <p className="mt-4 text-sm text-muted-foreground">Vues cumulées : <CountUp to={views} className="text-foreground" /></p>
-        )}
-
-        <div className="mt-14 grid gap-10 lg:grid-cols-[1.4fr_1fr]">
+        <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr]">
           <section>
             <div className="flex items-end justify-between border-b border-dashed pb-4">
               <h2 className="text-2xl font-bold">Mes recherches</h2>
