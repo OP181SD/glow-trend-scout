@@ -34,7 +34,7 @@ export function AppSidebar() {
         <Link to="/produits" aria-label="Trouver des inspirations" className="text-muted-foreground hover:text-primary"><Plus className="h-4 w-4" /></Link>
       </div>
       <div className="min-h-0 flex-1 space-y-1 overflow-y-auto">
-        {s.products.length === 0 && <p className="px-4 text-sm text-muted-foreground">Aucun produit pour l'instant.</p>}
+        {s.products.length === 0 && <p className="px-4 text-sm text-muted-foreground">Aucun dossier.</p>}
         {s.products.map((p) => {
           const active = p.id === s.activeProductId;
           const Icon = active ? FolderOpen : Folder;

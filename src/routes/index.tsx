@@ -35,7 +35,7 @@ function Dashboard() {
       <div className="relative mx-auto max-w-6xl px-6 py-12 md:px-10">
         <BlurText text="Les pubs qui marchent, réinventées pour vous." className="max-w-3xl text-5xl font-bold leading-[1.02] tracking-tight md:text-6xl" />
         <FadeContent delay={0.4}>
-          <p className="mt-5 max-w-lg text-lg text-muted-foreground">Créez un produit, on trouve les vidéos concurrentes qui performent et on écrit votre prompt vidéo IA.</p>
+          <p className="mt-5 max-w-lg text-lg text-muted-foreground">Votre produit → les vidéos qui cartonnent → votre script.</p>
           <Button asChild size="lg" className="mt-6 rounded-full"><Link to="/produits">Trouver des inspirations <ArrowRight /></Link></Button>
         </FadeContent>
 
@@ -48,7 +48,7 @@ function Dashboard() {
           ))}
         </div>
         {views > 0 && (
-          <p className="mt-4 text-sm text-muted-foreground">Vues cumulées des vidéos repérées : <CountUp to={views} className="text-foreground" /></p>
+          <p className="mt-4 text-sm text-muted-foreground">Vues cumulées : <CountUp to={views} className="text-foreground" /></p>
         )}
 
         <div className="mt-14 grid gap-10 lg:grid-cols-[1.4fr_1fr]">
@@ -58,7 +58,7 @@ function Dashboard() {
               <Button asChild size="sm" variant="outline" className="rounded-full"><Link to="/produits"><Plus /> Trouver des inspirations</Link></Button>
             </div>
             {s.products.length === 0 ? (
-              <p className="mt-6 text-muted-foreground">Aucun produit pour l'instant.</p>
+              <p className="mt-6 text-muted-foreground">Rien ici. Lancez votre première recherche.</p>
             ) : (
               <ul className="divide-y divide-dashed">
                 {s.products.map((p, i) => (
