@@ -5,9 +5,10 @@ import { BlurText, CountUp, FadeContent } from "@/components/reactbits";
 import { PlatformIcon, platformLabel } from "@/components/PlatformIcon";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-import { getAnalysis, getVideo } from "@/lib/api";
+import { useEffect, useState } from "react";
+import { analyzeWithAI, getAnalysis, getVideo } from "@/lib/api";
 import { activeProduct, MAX_INSPIRATIONS, toggleInspiration, useStore } from "@/lib/store";
-import type { Video } from "@/lib/types";
+import type { Analysis, Video } from "@/lib/types";
 
 export const Route = createFileRoute("/analyse/$videoId")({
   head: () => ({
@@ -39,9 +40,17 @@ function AnalysePage() {
   const s = useStore();
   const hydrated = useHydrated();
   const product = activeProduct(s);
+  const [ai, setAi] = useState<{ id: string; a: Analysis } | null>(null);
+  const v = hydrated ? getVideo(videoId, Object.values(s.videos).flat()) : undefined;
+  useEffect(() => {
+    if (!v) return;
+    let alive = true;
+    analyzeWithAI(v, product).then((a) => { if (alive) setAi({ id: v.id, a }); });
+    return () => { alive = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [v?.id, product?.id]);
   if (!hydrated) return null;
-  const v = getVideo(videoId, Object.values(s.videos).flat());
-  const a = v && getAnalysis(v.id, v);
+  const a = v && (ai?.id === v.id ? ai.a : getAnalysis(v.id, v));
   if (!v || !a) return <div className="p-12 text-center text-muted-foreground">Vidéo introuvable. <Link to="/top-videos" className="text-primary">Retour aux vidéos</Link></div>;
   const picked = product ? s.inspirations[product.id] ?? [] : [];
   const checked = picked.includes(v.id);
