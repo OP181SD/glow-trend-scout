@@ -153,7 +153,7 @@ function Thumb({ v, className = "" }: { v: Video; className?: string }) {
   );
 }
 
-function VideosStep({ videos, onPick, loadingId, onBack }: { videos: Video[]; onPick: (v: Video) => void; loadingId?: string; onBack: () => void }) {
+function VideosStep({ videos, onPick, loadingId, onBack }: { videos: Video[]; onPick: (v: Video) => void; loadingId?: string | undefined; onBack: () => void }) {
   const [filter, setFilter] = useState<Platform | "all">("all");
   const list = videos.filter((v) => filter === "all" || v.platform === filter);
   return (

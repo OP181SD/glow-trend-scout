@@ -11,7 +11,9 @@ export async function search(_product: Product): Promise<Video[]> {
 
 export async function analyze(video: Video): Promise<Analysis> {
   await wait(700);
-  return MOCK_ANALYSES[video.id];
+  const a = MOCK_ANALYSES[video.id];
+  if (!a) throw new Error("Analyse introuvable");
+  return a;
 }
 
 export async function generate(product: Product, video: Video, analysis: Analysis, tool: TargetTool): Promise<GeneratedPrompt> {
