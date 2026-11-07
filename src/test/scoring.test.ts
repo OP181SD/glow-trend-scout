@@ -55,7 +55,7 @@ describe("tendance des vues", () => {
   const v = (id: string, views: number, publishedAt: string, platform: Video["platform"] = "tiktok") =>
     ({ id, platform, views, publishedAt });
   it("vues par jour depuis la publication", () => {
-    expect(viewsPerDay(v("a", 1000, "2026-11-01"), now)).toBe(200);
+    expect(viewsPerDay(v("a", 1000, "2026-11-01"), now)).toBeCloseTo(1000 / 6, 5);
     // vidéo publiée aujourd'hui : jamais de division par 0
     expect(viewsPerDay(v("b", 1000, "2026-11-07"), now)).toBe(2000);
   });
@@ -66,9 +66,14 @@ describe("tendance des vues", () => {
     expect(viewsMomentum(pool[2]!, pool, now).momentum).toBe("down");
   });
   it("compare seulement à la même plateforme", () => {
-    const pool = [v("t1", 100_000, "2026-11-05"), v("t2", 90_000, "2026-11-05"), v("i1", 500, "2026-11-05", "instagram"), v("i2", 400, "2026-11-05", "instagram")];
-    expect(viewsMomentum(pool[0]!, pool, now).momentum).toBe("up");
-    expect(viewsMomentum(pool[2]!, pool, now).momentum).toBe("up");
+    const pool = [
+      v("t1", 1_000_000, "2026-11-05"), v("t2", 100_000, "2026-11-05"), v("t3", 50_000, "2026-11-05"),
+      v("i1", 20_000, "2026-11-05", "instagram"), v("i2", 8_000, "2026-11-05", "instagram"), v("i3", 6_000, "2026-11-05", "instagram"),
+    ];
+    // 20k vues sur Instagram battent la médiane Instagram…
+    expect(viewsMomentum(pool[3]!, pool, now).momentum).toBe("up");
+    // …même si les TikTok de la recherche en ont 50 fois plus.
+    expect(viewsMomentum(pool[1]!, pool, now).momentum).toBe("flat");
   });
   it("aucune flèche avec une seule vidéo", () => {
     const only = [v("solo", 10_000, "2026-11-05")];
