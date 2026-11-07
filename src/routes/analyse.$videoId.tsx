@@ -1,4 +1,4 @@
-import { createFileRoute, Link, notFound, useHydrated } from "@tanstack/react-router";
+import { createFileRoute, Link, useHydrated } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { ArrowLeft, Check, ExternalLink, Plus } from "lucide-react";
 import { BlurText, CountUp, FadeContent } from "@/components/reactbits";
@@ -10,23 +10,16 @@ import { activeProduct, MAX_INSPIRATIONS, toggleInspiration, useStore } from "@/
 import type { Video } from "@/lib/types";
 
 export const Route = createFileRoute("/analyse/$videoId")({
-  loader: ({ params }) => {
-    const video = getVideo(params.videoId);
-    const analysis = getAnalysis(params.videoId);
-    if (!video || !analysis) throw notFound();
-    return { video, analysis };
-  },
-  head: ({ loaderData }) => ({
+  head: () => ({
     meta: [
-      { title: loaderData ? `Analyse de @${loaderData.video.creator.handle} — Ads inspirées` : "Analyse — Ads inspirées" },
-      { name: "description", content: loaderData ? `Pourquoi cette vidéo marche : ${loaderData.analysis.concept}.` : "Analyse détaillée d'une vidéo." },
-      { property: "og:title", content: loaderData ? `Analyse de @${loaderData.video.creator.handle}` : "Analyse" },
-      { property: "og:description", content: loaderData?.analysis.concept ?? "Analyse détaillée d'une vidéo." },
+      { title: "Analyse de la vidéo — Ads inspirées" },
+      { name: "description", content: "Pourquoi cette vidéo marche : hook, déroulé, style et correspondance avec votre marque." },
+      { property: "og:title", content: "Analyse de la vidéo — Ads inspirées" },
+      { property: "og:description", content: "Analyse détaillée d'une vidéo de marque ou concurrente." },
       { property: "og:type", content: "article" },
       { name: "twitter:card", content: "summary" },
     ],
   }),
-  notFoundComponent: () => <div className="p-12 text-center text-muted-foreground">Vidéo introuvable. <Link to="/top-videos" className="text-primary">Retour aux vidéos</Link></div>,
   component: AnalysePage,
 });
 
@@ -42,16 +35,21 @@ function embedUrl(v: Video): string | null {
 }
 
 function AnalysePage() {
-  const { video: v, analysis: a } = Route.useLoaderData();
+  const { videoId } = Route.useParams();
   const s = useStore();
   const hydrated = useHydrated();
   const product = activeProduct(s);
+  if (!hydrated) return null;
+  const v = getVideo(videoId, Object.values(s.videos).flat());
+  const a = v && getAnalysis(v.id, v);
+  if (!v || !a) return <div className="p-12 text-center text-muted-foreground">Vidéo introuvable. <Link to="/top-videos" className="text-primary">Retour aux vidéos</Link></div>;
   const picked = product ? s.inspirations[product.id] ?? [] : [];
   const checked = picked.includes(v.id);
   const embed = embedUrl(v);
   const hook = v.onScreenText[0]?.replace(/[«»"]/g, "").trim();
 
   function addInspiration() {
+    if (!v) return;
     if (!product) { toast.error("Sélectionnez d'abord un produit"); return; }
     if (!toggleInspiration(product.id, v.id)) toast.error(`${MAX_INSPIRATIONS} inspirations maximum`);
     else toast.success(checked ? "Retirée des inspirations" : "Ajoutée aux inspirations");
