@@ -92,9 +92,15 @@ function TopVideos() {
               ))}
             </div>
             <Button asChild size="sm" variant="outline" className="rounded-full border-dashed"><Link to="/insights"><BarChart3 /> Insights</Link></Button>
-            <Button asChild size="sm" variant="outline" className="rounded-full border-dashed" disabled={picked.length < 2}>
-              <Link to="/comparer" disabled={picked.length < 2}><Columns3 /> Comparer</Link>
-            </Button>
+            {picked.length < 2 ? (
+              <Button size="sm" variant="outline" className="rounded-full border-dashed" onClick={() => toast("Cochez au moins 2 vidéos pour comparer.")}>
+                <Columns3 /> Comparer <span className="font-mono text-xs text-muted-foreground">{picked.length}/2</span>
+              </Button>
+            ) : (
+              <Button asChild size="sm" variant="outline" className="rounded-full border-dashed">
+                <Link to="/comparer"><Columns3 /> Comparer</Link>
+              </Button>
+            )}
             <Button size="sm" variant="outline" className="rounded-full border-dashed" disabled={saving} onClick={saveDemo}>
               {saving ? <Loader2 className="animate-spin" /> : <Save />} Démo
             </Button>
