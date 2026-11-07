@@ -8,7 +8,7 @@ import { VideoCard } from "@/components/VideoCard";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { MOCK_ANALYSES } from "@/lib/mock-data";
+import { getAnalysis } from "@/lib/api";
 import { activeProduct, MAX_INSPIRATIONS, toggleInspiration, useStore } from "@/lib/store";
 import type { Platform } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -88,7 +88,7 @@ function TopVideos() {
               const checked = picked.includes(v.id);
               return (
                 <FadeContent key={v.id} delay={i * 0.06}>
-                  <VideoCard v={v} format={MOCK_ANALYSES[v.id]?.format} onClick={() => navigate({ to: "/analyse/$videoId", params: { videoId: v.id } })}
+                  <VideoCard v={v} format={getAnalysis(v.id, v)?.format} onClick={() => navigate({ to: "/analyse/$videoId", params: { videoId: v.id } })}
                     inspiration={{ checked, disabled: !checked && picked.length >= MAX_INSPIRATIONS, onToggle: () => { if (!toggleInspiration(product.id, v.id)) toast.error(`${MAX_INSPIRATIONS} inspirations maximum`); } }} />
                 </FadeContent>
               );

@@ -8,7 +8,7 @@ const clean = (t: string) => t.replace(/[«»"]/g, "").trim();
 export async function search(product: Product, limit = 10): Promise<Video[]> {
   const { searchVideos } = await import("./search.functions");
   try {
-    const res = await searchVideos({ data: { query: product.description || product.name, platform: product.style.platform, limit } });
+    const res = await searchVideos({ data: { query: product.description || product.name, limit } });
     if (res.videos.length) return res.videos;
   } catch {
     /* on retombe sur les exemples ci-dessous */
