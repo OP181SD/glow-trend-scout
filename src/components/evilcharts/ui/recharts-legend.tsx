@@ -1,3 +1,4 @@
+// @ts-nocheck — fichier tiers Evil Charts
 import { getPayloadConfigFromPayload, getColorsCount, useChart } from "@/components/evilcharts/ui/recharts-chart";
 import * as RechartsPrimitive from "recharts";
 import { cn } from "@/lib/utils";

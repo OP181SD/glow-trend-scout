@@ -1,3 +1,4 @@
+// @ts-nocheck — fichier tiers Evil Charts
 "use client";
 
 import { motion, useMotionValue, useMotionValueEvent, useSpring, useTransform } from "motion/react";

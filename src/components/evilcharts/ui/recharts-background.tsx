@@ -1,3 +1,4 @@
+// @ts-nocheck — fichier tiers Evil Charts
 "use client";
 
 import { ZIndexLayer } from "recharts";
