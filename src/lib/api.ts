@@ -18,7 +18,7 @@ export async function search(product: Product, opts: { demo: boolean; limit?: nu
   const image = opts.useImage && !opts.demo ? imageForSearch(product.imageUrl) : null;
   let res;
   try {
-    res = await searchVideos({ data: { query: product.description || product.name, limit: opts.limit ?? 10, demo: opts.demo, ...(image ? { image } : {}) } });
+    res = await searchVideos({ data: { query: product.description || product.name, limit: opts.limit ?? 10, demo: opts.demo, ...(product.style.platform ? { platform: product.style.platform } : {}), ...(image ? { image } : {}) } });
   } catch {
     throw new SearchFailed("Le service de recherche ne répond pas.");
   }

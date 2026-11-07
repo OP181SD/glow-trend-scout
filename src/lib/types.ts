@@ -42,7 +42,7 @@ export interface Product {
   imageUrl: string;
   createdAt?: string;
   brand: { name: string; tone: string; colors: string[]; target: string };
-  style: { format: string; durationSeconds: number; platform: Platform };
+  style: { format: string; durationSeconds: number; platform?: Platform };
 }
 
 export type TargetTool = "Veo" | "Sora" | "Kling" | "Runway";
