@@ -14,6 +14,12 @@ const tierLabel: Record<AttractionTier, string> = {
   inconnu: "Attraction",
 };
 
+/** Vues ÷ abonnés ramené sur 100 (échelle log) : 1× = 50, 4× = 100, ≤0,25× = 0. */
+export function attractionScore(vfr: number | null): number | null {
+  if (vfr === null || vfr <= 0) return vfr === null ? null : 0;
+  return Math.round(Math.min(100, Math.max(0, 50 + 25 * Math.log2(vfr))));
+}
+
 export const fmt = (n: number) => new Intl.NumberFormat("fr-FR", { notation: "compact", maximumFractionDigits: 1 }).format(n);
 
 interface Props {
@@ -28,6 +34,7 @@ export function VideoCard({ v, format, selected, onClick, inspiration }: Props) 
   const hook = v.onScreenText[0]?.replace(/[«»"]/g, "").trim();
   const vfr = viewsPerFollower(v);
   const tier = attractionTier(vfr);
+  const attr = attractionScore(vfr);
   const tierStyle = tier === "pepite" ? "bg-primary text-primary-foreground" : tier === "breakout" ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground";
   return (
     <div className="flex flex-col gap-3">
@@ -56,15 +63,21 @@ export function VideoCard({ v, format, selected, onClick, inspiration }: Props) 
         </div>
         <Tooltip>
           <TooltipTrigger asChild>
-            <div className="flex cursor-help items-center justify-between gap-2 rounded-2xl border border-dashed px-3 py-2">
-              <div className="flex items-center gap-2">
-                <span className="font-mono text-xl leading-none text-primary">{vfr === null ? "—" : <CountUp to={vfr} decimals={vfr < 10 ? 1 : 0} suffix="×" />}</span>
+            <div className="cursor-help space-y-1.5 rounded-2xl border border-dashed px-3 py-2">
+              <div className="flex items-center justify-between gap-2">
+                <span className="text-[11px] text-muted-foreground">Attraction</span>
                 <span className={cn("whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-medium", tierStyle)}>{tierLabel[tier]}</span>
+                <span className="ml-auto font-mono text-sm text-primary">{attr === null ? "—" : <CountUp to={attr} />}<span className="text-[10px] text-muted-foreground">/100</span></span>
               </div>
-              <span className="font-mono text-sm"><CountUp to={v.score} /><span className="text-[10px] text-muted-foreground">/100</span></span>
+              <div className="h-1.5 overflow-hidden rounded-full bg-muted">
+                <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${attr ?? 0}%` }} />
+              </div>
             </div>
           </TooltipTrigger>
-          <TooltipContent className="max-w-56">Vues ÷ abonnés. {v.scoreReason}</TooltipContent>
+          <TooltipContent className="max-w-60">
+            Vues ÷ abonnés, sur 100. 50 = la vidéo touche autant de monde que le compte a d'abonnés. 100 = 4× plus. 0 = moins d'un quart.
+            {vfr !== null && ` Ici : ${fmt(v.views)} vues pour ${fmt(v.creator.followers)} abonnés.`}
+          </TooltipContent>
         </Tooltip>
         <div className="flex gap-3 font-mono text-xs text-muted-foreground">
           <span className="inline-flex items-center gap-1"><Eye className="h-3 w-3" /><CountUp to={v.views} /></span>

@@ -33,7 +33,7 @@ export function AppSidebar() {
     <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-dashed bg-sidebar p-4 md:flex">
       <div className="mb-8 flex items-center justify-between px-2 pt-2">
         <Link to="/" className="flex items-center gap-2" aria-label="TrendMe — accueil">
-          <img src={logoTrendme} alt="TrendMe" width={1152} height={576} className="h-10 w-auto" />
+          <img src={logoTrendme} alt="TrendMe" width={1152} height={576} className="h-16 w-auto md:h-20" />
         </Link>
         <button onClick={() => setOpen(false)} aria-label="Ranger le menu" className="rounded-full p-2 text-muted-foreground hover:bg-sidebar-accent hover:text-foreground"><PanelLeftClose className="h-4 w-4" /></button>
       </div>
