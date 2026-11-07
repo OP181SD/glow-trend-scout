@@ -68,9 +68,11 @@ export function normalizeOriane(r: OrianeResult): RawVideo | null {
 }
 
 export async function searchOriane(input: OrianeSearchInput): Promise<RawVideo[]> {
-  const baseUrl = process.env["ORIANE_API_URL"];
-  const apiKey = process.env["ORIANE_API_KEY"];
+  let baseUrl = process.env["ORIANE_API_URL"]?.trim();
+  const apiKey = process.env["ORIANE_API_KEY"]?.trim();
   if (!baseUrl || !apiKey) throw new Error("Oriane non configuré");
+  if (!/^https?:\/\//.test(baseUrl)) baseUrl = `https://${baseUrl}`;
+  try { new URL(baseUrl); } catch { throw new Error("ORIANE_API_URL n'est pas une adresse valide"); }
 
   const term = input.query.trim().slice(0, 200);
   const body = {
