@@ -52,3 +52,17 @@ export function scoreVideos(videos: Scorable[]): Video[] {
   });
   return scored.sort((a, b) => b.score - a.score);
 }
+
+/** Fraîcheur : 1 (≤ 7 j), 0,8 (≤ 30 j), 0,5 (≤ 90 j), 0,25 au-delà. */
+export function recencyFactor(publishedAt: string, now = Date.now()): number {
+  const days = (now - new Date(publishedAt).getTime()) / 86_400_000;
+  return days <= 7 ? 1 : days <= 30 ? 0.8 : days <= 90 ? 0.5 : 0.25;
+}
+
+/** Tendance = score créa × fraîcheur. Une vidéo récente qui performe passe devant. */
+export function trendScore(v: Pick<Video, "score" | "publishedAt">, now = Date.now()): number {
+  return v.score * recencyFactor(v.publishedAt, now);
+}
+
+export const isTrending = (v: Pick<Video, "score" | "publishedAt">, now = Date.now()) =>
+  recencyFactor(v.publishedAt, now) >= 0.8 && v.score >= 60;

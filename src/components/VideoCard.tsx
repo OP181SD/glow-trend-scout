@@ -4,7 +4,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import type { Video } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { attractionTier, viewsPerFollower, type AttractionTier } from "@/lib/scoring";
+import { attractionTier, isTrending, viewsPerFollower, type AttractionTier } from "@/lib/scoring";
 import { Eye, Heart } from "lucide-react";
 
 const tierLabel: Record<AttractionTier, string> = {
@@ -44,6 +44,7 @@ export function VideoCard({ v, format, selected, onClick, inspiration }: Props) 
           <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-ink/70 backdrop-blur">
             <PlatformIcon platform={v.platform} className="h-3.5 w-3.5" />
           </span>
+          {isTrending(v) && <span className="ml-auto mr-1 rounded-full bg-primary px-2.5 py-1 text-[11px] font-medium text-primary-foreground">Tendance</span>}
           {format && <span className="rounded-full bg-ink/70 px-2.5 py-1 text-[11px] backdrop-blur">{format}</span>}
         </div>
       </SpotlightCard>
@@ -58,7 +59,7 @@ export function VideoCard({ v, format, selected, onClick, inspiration }: Props) 
             <div className="flex cursor-help items-center justify-between gap-2 rounded-2xl border border-dashed px-3 py-2">
               <div className="flex items-center gap-2">
                 <span className="font-mono text-xl leading-none text-primary">{vfr === null ? "—" : <CountUp to={vfr} decimals={vfr < 10 ? 1 : 0} suffix="×" />}</span>
-                <span className={cn("rounded-full px-2 py-0.5 text-[10px] font-medium", tierStyle)}>{tierLabel[tier]}</span>
+                <span className={cn("whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-medium", tierStyle)}>{tierLabel[tier]}</span>
               </div>
               <span className="font-mono text-sm"><CountUp to={v.score} /><span className="text-[10px] text-muted-foreground">/100</span></span>
             </div>

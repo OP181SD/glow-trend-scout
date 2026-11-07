@@ -1,3 +1,4 @@
+import { trendScore } from "@/lib/scoring";
 import { createFileRoute, Link, useHydrated, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -34,6 +35,7 @@ function TopVideos() {
   const hydrated = useHydrated();
   const [filter, setFilter] = useState<Platform | "all">("all");
   const [saving, setSaving] = useState(false);
+  const [sort, setSort] = useState<"trend" | "score">("trend");
 
   if (!hydrated) return <div className="mx-auto max-w-6xl px-6 py-12 md:px-10"><Skeleton className="h-12 w-2/3 rounded-full" /><SkeletonGrid /></div>;
   if (!product) {
@@ -47,7 +49,8 @@ function TopVideos() {
   }
   const all = s.videos[product.id];
   const picked = s.inspirations[product.id] ?? [];
-  const list = (all ?? []).filter((v) => filter === "all" || v.platform === filter);
+  const list = (all ?? []).filter((v) => filter === "all" || v.platform === filter)
+    .sort((a, b) => sort === "trend" ? trendScore(b) - trendScore(a) : b.score - a.score);
 
   async function saveDemo() {
     if (!product || !all?.length) return;
@@ -67,7 +70,7 @@ function TopVideos() {
     <div className="mx-auto max-w-6xl px-6 py-12 md:px-10">
       <p className="text-sm text-muted-foreground">Dossier · {product.name}</p>
       <div className="mt-2 flex flex-wrap items-end justify-between gap-4 border-b border-dashed pb-6">
-        <BlurText text="Vidéos qui cartonnent" className="text-5xl font-bold tracking-tight" />
+        <BlurText text="Tendances du moment" className="text-5xl font-bold tracking-tight" />
         <div className="flex gap-1.5">
           {(["all", "tiktok", "instagram", "youtube"] as const).map((p) => (
             <button key={p} onClick={() => setFilter(p)} className={cn("inline-flex items-center gap-1.5 rounded-full border border-dashed px-3 py-1.5 text-sm", filter === p ? "border-solid border-primary bg-primary/15" : "text-muted-foreground")}>
@@ -79,10 +82,15 @@ function TopVideos() {
 
       <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
         <p className="inline-flex items-center gap-2 rounded-full border border-dashed px-4 py-2 text-sm text-muted-foreground">
-          <Info className="h-4 w-4 text-primary" /> Classé par vues, engagement et vues ÷ abonnés — pas par performance pub.
+          <Info className="h-4 w-4 text-primary" /> {sort === "trend" ? "Récentes et qui performent d'abord." : "Classé par vues, engagement et vues ÷ abonnés."}
         </p>
         {all && all.length > 0 && (
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
+            <div className="flex rounded-full border border-dashed p-0.5 text-sm">
+              {(["trend", "score"] as const).map((k) => (
+                <button key={k} onClick={() => setSort(k)} className={cn("rounded-full px-3 py-1", sort === k ? "bg-primary text-primary-foreground" : "text-muted-foreground")}>{k === "trend" ? "Tendance" : "Score"}</button>
+              ))}
+            </div>
             <Button asChild size="sm" variant="outline" className="rounded-full border-dashed"><Link to="/insights"><BarChart3 /> Insights</Link></Button>
             <Button asChild size="sm" variant="outline" className="rounded-full border-dashed" disabled={picked.length < 2}>
               <Link to="/comparer" disabled={picked.length < 2}><Columns3 /> Comparer</Link>
