@@ -1,6 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowRight, Folder, Plus } from "lucide-react";
-import { Aurora, BlurText, CountUp, FadeContent } from "@/components/reactbits";
+import { OrbitHero } from "@/components/OrbitHero";
+import { BlurText, CountUp, FadeContent } from "@/components/reactbits";
 import { Button } from "@/components/ui/button";
 import { setState, useStore } from "@/lib/store";
 
@@ -31,15 +32,18 @@ function Dashboard() {
   ];
   return (
     <div className="relative">
-      <Aurora />
-      <div className="relative mx-auto max-w-6xl px-6 py-12 md:px-10">
-        <BlurText text="Les pubs qui marchent, réinventées pour vous." className="max-w-3xl text-5xl font-bold leading-[1.02] tracking-tight md:text-6xl" />
+      <OrbitHero>
+        <p className="text-sm font-bold uppercase tracking-[0.3em]">Ads inspirées</p>
+        <BlurText text="Votre espace d'inspiration vidéo" className="mt-4 max-w-xl justify-center text-5xl font-medium leading-[1.02] tracking-tight md:text-7xl" />
         <FadeContent delay={0.4}>
-          <p className="mt-5 max-w-lg text-lg text-muted-foreground">Votre produit → les vidéos qui cartonnent → votre script.</p>
-          <Button asChild size="lg" className="mt-6 rounded-full"><Link to="/produits">Trouver des inspirations <ArrowRight /></Link></Button>
+          <div className="mt-8 flex items-center justify-center gap-2">
+            <Button asChild size="lg" className="rounded-full"><Link to="/produits">Trouver des inspirations <ArrowRight /></Link></Button>
+            <Button asChild size="lg" variant="ghost" className="rounded-full"><Link to="/top-videos">Mes vidéos</Link></Button>
+          </div>
         </FadeContent>
-
-        <div className="mt-14 grid grid-cols-2 gap-4 lg:grid-cols-4">
+      </OrbitHero>
+      <div className="relative mx-auto max-w-6xl px-6 pb-12 md:px-10">
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
           {metrics.map((m, i) => (
             <FadeContent key={m.label} delay={0.5 + i * 0.08} className="rounded-[1.75rem] border border-dashed bg-card/70 p-5 backdrop-blur">
               <p className="text-sm text-muted-foreground">{m.label}</p>
