@@ -6,6 +6,8 @@ import { BlurText, FadeContent, ShinyText } from "@/components/reactbits";
 import { Button } from "@/components/ui/button";
 import { Message, MessageAction, MessageActions, MessageContent } from "@/components/ui/message";
 import { generate } from "@/lib/api";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { ShootingScriptView } from "@/components/ShootingScriptView";
 import { setState, useStore } from "@/lib/store";
 
 export const Route = createFileRoute("/prompt/$id")({
@@ -73,7 +75,16 @@ function PromptPage() {
         ))}
       </div>
 
-      <Message className="mt-6 block">
+      <Tabs defaultValue="prompt" className="mt-6">
+        <TabsList className="rounded-full">
+          <TabsTrigger value="prompt" className="rounded-full">Prompt IA</TabsTrigger>
+          <TabsTrigger value="script" className="rounded-full">Script de tournage</TabsTrigger>
+        </TabsList>
+        <TabsContent value="script" className="mt-4">
+          {regen ? <div className="py-16 text-center"><ShinyText text="Nouvelle version en cours…" className="text-lg" /></div> : <ShootingScriptView script={r.shootingScript} title={product.name} onRegenerate={regenerate} />}
+        </TabsContent>
+        <TabsContent value="prompt">
+      <Message className="mt-2 block">
         <div className="rounded-[2rem] border border-dashed bg-card p-6">
           {regen ? (
             <div className="py-16 text-center"><ShinyText text="Nouvelle version en cours…" className="text-lg" /></div>
@@ -92,6 +103,8 @@ function PromptPage() {
           </MessageActions>
         </div>
       </Message>
+        </TabsContent>
+      </Tabs>
 
       <div className="mt-6 grid gap-4 md:grid-cols-2">
         <FadeContent className="rounded-[1.75rem] border border-dashed bg-card p-6">

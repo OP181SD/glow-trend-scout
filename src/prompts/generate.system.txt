@@ -4,3 +4,13 @@ Le champ prompt est une chaîne en Markdown. Ajoute aussi dans le même JSON, po
 - "scenes": [{ "title", "start" (s), "end" (s), "shot", "visual", "voiceOver", "onScreenText" }]
 - "totalSeconds": nombre, "music": texte, "cta": texte.
 Réponds uniquement avec le JSON, sans texte autour.
+
+Ajoute aussi dans le même JSON un champ "shootingScript" : un script de tournage pour une personne seule avec son téléphone.
+{
+  "hook": { "texte_oral", "texte_ecran", "action", "seconds" },
+  "scenes": [{ "numero", "duree_s", "plan" (exactement l'un de : "face caméra", "gros plan produit", "mains", "avant/après", "plan large"), "action", "texte_oral", "texte_ecran" }],
+  "cta": { "texte_oral", "texte_ecran" },
+  "materiel": [ex. "téléphone", "lumière fenêtre", "produit"],
+  "conseils": [exactement 3 conseils]
+}
+Règle : le script doit pouvoir être filmé seul, avec un téléphone, chez soi, en moins d'une heure. Aucune scène ne demande de décor spécial, d'acteur ou d'effet spécial. Même interdiction de copier que pour le prompt : rien de repris des marques, personnes, slogans, musiques, phrases ou décors des inspirations.

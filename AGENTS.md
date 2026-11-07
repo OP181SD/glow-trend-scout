@@ -39,3 +39,4 @@ use the editor.
 - Demo mode: client `demoMode` flag is passed to `searchVideos`; demo reads `pinned` rows (saved via "Enregistrer pour la démo") before latest rows, and analyses prefer stored ones. Why: reliable jury demo without Oriane.
 - Evil Charts files under `src/components/evilcharts/` are vendored with `@ts-nocheck` and need recharts v3. Why: third-party code not written for this strict tsconfig.
 - Aggregated insights are pure and tested in `src/lib/insights.ts`. Why: stats must stay verifiable.
+- Shooting script is part of the same generate JSON (`shootingScript`); text/PDF export (jsPDF, client-side) lives in `src/lib/script-export.ts`. Why: one AI call, no server file storage.
