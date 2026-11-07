@@ -9,9 +9,13 @@ const Input = z.object({
   platform: z.enum(["tiktok", "instagram", "youtube"]).optional(),
   limit: z.number().int().min(1).max(10).default(5),
   demo: z.boolean().optional(),
+  image: z.object({
+    mediaType: z.enum(["image/jpeg", "image/png", "image/webp"]),
+    base64: z.string().min(10).max(14_000_000),
+  }).optional(),
 });
 
-export type SearchResult = { videos: Video[]; source: "oriane" | "demo"; error?: string };
+export type SearchResult = { videos: Video[]; source: "oriane" | "demo"; error?: string; imageUsed?: boolean; imageUnsupported?: boolean };
 
 export const searchVideos = createServerFn({ method: "POST" })
   .validator((data: z.input<typeof Input>) => Input.parse(data))
@@ -21,8 +25,18 @@ export const searchVideos = createServerFn({ method: "POST" })
 
     if (!demo) {
       try {
-        const { searchOriane } = await import("./oriane.server");
-        const raw = await searchOriane({ query: data.query, platform: data.platform, limit: data.limit });
+        const { searchOriane, ImageSearchUnsupported } = await import("./oriane.server");
+        const base = { query: data.query, platform: data.platform, limit: data.limit };
+        let raw;
+        let imageUnsupported = false;
+        try {
+          raw = await searchOriane({ ...base, image: data.image });
+        } catch (e) {
+          if (!(e instanceof ImageSearchUnsupported)) throw e;
+          imageUnsupported = true;
+          raw = await searchOriane(base);
+        }
+        const flags = { imageUsed: !!data.image && !imageUnsupported, imageUnsupported };
         const videos = scoreVideos(raw.map(({ providedEngagement: _p, ...v }) => v));
         const { data: s } = await supabaseAdmin.from("searches")
           .insert({ query: data.query, platform: data.platform ?? null, source: "oriane", data: { limit: data.limit, count: videos.length } })
@@ -30,7 +44,7 @@ export const searchVideos = createServerFn({ method: "POST" })
         if (videos.length) {
           await supabaseAdmin.from("videos").upsert(videos.map((v) => ({ id: v.id, search_id: s?.id ?? null, query: data.query, platform: v.platform, score: v.score, data: v as unknown as Json })), { ignoreDuplicates: false });
         }
-        return { videos, source: "oriane" };
+        return { videos, source: "oriane", ...flags };
       } catch (e) {
         console.error("Recherche Oriane échouée:", e instanceof Error ? e.message : "erreur inconnue");
         return { videos: [], source: "oriane", error: "La recherche de vidéos n'a pas abouti." };

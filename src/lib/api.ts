@@ -3,16 +3,27 @@ import type { Analysis, GeneratedPrompt, Product, TargetTool, Video } from "./ty
 /** Erreur de recherche affichable à l'utilisateur, avec proposition de mode démo. */
 export class SearchFailed extends Error {}
 
-export async function search(product: Product, opts: { demo: boolean; limit?: number }): Promise<{ videos: Video[]; source: "oriane" | "demo" }> {
+const IMAGE_TYPES = ["image/jpeg", "image/png", "image/webp"] as const;
+type ImageType = (typeof IMAGE_TYPES)[number];
+
+/** Image produit utilisable par la recherche visuelle (data URL JPG, PNG ou WebP), sinon null. */
+export function imageForSearch(dataUrl: string): { mediaType: ImageType; base64: string } | null {
+  const m = dataUrl.match(/^data:(image\/[a-z]+);base64,(.+)$/);
+  if (!m || !(IMAGE_TYPES as readonly string[]).includes(m[1]!)) return null;
+  return { mediaType: m[1] as ImageType, base64: m[2]! };
+}
+
+export async function search(product: Product, opts: { demo: boolean; limit?: number; useImage?: boolean }) {
   const { searchVideos } = await import("./search.functions");
+  const image = opts.useImage && !opts.demo ? imageForSearch(product.imageUrl) : null;
   let res;
   try {
-    res = await searchVideos({ data: { query: product.description || product.name, limit: opts.limit ?? 10, demo: opts.demo } });
+    res = await searchVideos({ data: { query: product.description || product.name, limit: opts.limit ?? 10, demo: opts.demo, ...(image ? { image } : {}) } });
   } catch {
     throw new SearchFailed("Le service de recherche ne répond pas.");
   }
   if (res.error) throw new SearchFailed(res.error);
-  return { videos: res.videos, source: res.source };
+  return { videos: res.videos, source: res.source, imageUsed: !!res.imageUsed, imageUnsupported: !!res.imageUnsupported };
 }
 
 export function getVideo(id: string, extra: Video[] = []): Video | undefined {
