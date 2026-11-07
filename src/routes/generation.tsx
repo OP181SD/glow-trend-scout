@@ -93,10 +93,16 @@ function GenerationPage() {
         ) : (
           <div className="mt-5 grid gap-4 sm:grid-cols-3">
             {videos.map((v, i) => (
-              <FadeContent key={v.id} delay={i * 0.06} className="relative flex aspect-[9/16] max-h-80 flex-col justify-end overflow-hidden rounded-[1.75rem] border border-dashed bg-gradient-to-b from-accent/60 via-card to-ink p-4">
-                <button onClick={() => toggleInspiration(product.id, v.id)} aria-label="Retirer" className="absolute right-3 top-3 rounded-full bg-ink/80 p-1.5"><X className="h-3.5 w-3.5" /></button>
-                <p className="font-bold">« {v.onScreenText[0]?.replace(/[«»"]/g, "")} »</p>
-                <p className="mt-2 inline-flex items-center gap-1.5 text-sm text-muted-foreground"><PlatformIcon platform={v.platform} className="h-3.5 w-3.5" /> @{v.creator.handle}</p>
+              <FadeContent key={v.id} delay={i * 0.06} className="relative flex aspect-[9/16] max-h-80 flex-col justify-end overflow-hidden rounded-[1.75rem] border border-dashed bg-ink p-4 text-ink-foreground">
+                {v.thumbnailUrl ? (
+                  <img src={v.thumbnailUrl} alt={`Miniature de @${v.creator.handle}`} loading="lazy" className="absolute inset-0 h-full w-full object-cover" />
+                ) : (
+                  <span aria-hidden className="absolute inset-0 bg-gradient-to-b from-accent/60 via-card to-ink" />
+                )}
+                <span aria-hidden className="absolute inset-0 bg-gradient-to-t from-ink/90 via-ink/30 to-transparent" />
+                <button onClick={() => toggleInspiration(product.id, v.id)} aria-label="Retirer" className="absolute right-3 top-3 z-10 rounded-full bg-ink/80 p-1.5"><X className="h-3.5 w-3.5" /></button>
+                <p className="relative font-bold">« {v.onScreenText[0]?.replace(/[«»"]/g, "")} »</p>
+                <p className="relative mt-2 inline-flex items-center gap-1.5 text-sm text-ink-foreground/80"><PlatformIcon platform={v.platform} className="h-3.5 w-3.5" /> @{v.creator.handle}</p>
               </FadeContent>
             ))}
           </div>
