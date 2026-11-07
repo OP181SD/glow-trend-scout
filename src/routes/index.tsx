@@ -1,9 +1,9 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { ArrowRight, Folder, Plus } from "lucide-react";
+import { ArrowRight, Folder, Plus, Trash2 } from "lucide-react";
 import { OrbitHero } from "@/components/OrbitHero";
 import { BlurText, FadeContent } from "@/components/reactbits";
 import { Button } from "@/components/ui/button";
-import { setState, useStore } from "@/lib/store";
+import { deleteProduct, setState, useStore } from "@/lib/store";
 import logoTrendme from "@/assets/logo-trendme.png";
 
 export const Route = createFileRoute("/")({
@@ -49,14 +49,21 @@ function Dashboard() {
               <ul className="divide-y divide-dashed">
                 {s.products.map((p, i) => (
                   <FadeContent key={p.id} delay={i * 0.05}>
-                    <li>
-                      <button onClick={() => { setState((st) => ({ ...st, activeProductId: p.id })); navigate({ to: "/top-videos" }); }} className="flex w-full items-center gap-4 py-4 text-left hover:text-primary">
+                    <li className="group flex items-center gap-1">
+                      <button onClick={() => { setState((st) => ({ ...st, activeProductId: p.id })); navigate({ to: "/top-videos" }); }} className="flex min-w-0 flex-1 items-center gap-4 py-4 text-left hover:text-primary">
                         {p.imageUrl ? <img src={p.imageUrl} alt="" className="h-11 w-11 rounded-xl object-cover" /> : <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-muted"><Folder className="h-4 w-4 text-primary" /></span>}
                         <span className="min-w-0 flex-1">
                           <span className="block truncate font-medium">{p.name}</span>
                           <span className="block truncate text-sm text-muted-foreground">{p.brand.name || "Sans marque"}</span>
                         </span>
                         <span className="font-mono text-xs text-muted-foreground">{p.createdAt ? new Date(p.createdAt).toLocaleDateString("fr-FR") : "—"}</span>
+                      </button>
+                      <button
+                        onClick={() => deleteProduct(p.id)}
+                        aria-label={`Supprimer le dossier ${p.name}`}
+                        title="Supprimer ce dossier"
+                        className="shrink-0 rounded-full p-2 text-muted-foreground opacity-0 transition-opacity hover:text-destructive focus:opacity-100 group-hover:opacity-100">
+                        <Trash2 className="h-4 w-4" />
                       </button>
                     </li>
                   </FadeContent>
