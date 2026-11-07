@@ -8,9 +8,9 @@ import { setState, useStore } from "@/lib/store";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Dashboard — Ads inspirées" },
+      { title: "Dashboard — TrendMe" },
       { name: "description", content: "Suivez vos recherches, les vidéos concurrentes analysées et vos prompts vidéo IA générés." },
-      { property: "og:title", content: "Dashboard — Ads inspirées" },
+      { property: "og:title", content: "Dashboard — TrendMe" },
       { property: "og:description", content: "Vos pubs vidéo inspirées des meilleures, en un coup d'œil." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -33,7 +33,7 @@ function Dashboard() {
   return (
     <div className="relative">
       <OrbitHero>
-        <p className="text-sm font-bold uppercase tracking-[0.3em]">Ads inspirées</p>
+        <p className="text-sm font-bold uppercase tracking-[0.3em]">TrendMe</p>
         <BlurText text="Votre espace d'inspiration vidéo" className="mt-4 max-w-xl justify-center text-5xl font-medium leading-[1.02] tracking-tight md:text-7xl" />
         <FadeContent delay={0.4}>
           <div className="mt-8 flex items-center justify-center gap-2">
