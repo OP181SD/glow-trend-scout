@@ -124,6 +124,7 @@ function AddProduct() {
           </button>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          <Chip active={!p.style.platform} onClick={() => setStyle({ platform: undefined })}>Tous</Chip>
           {(["tiktok", "instagram", "youtube"] as Platform[]).map((pl) => (
             <Chip key={pl} active={p.style.platform === pl} onClick={() => setStyle({ platform: pl })}><PlatformIcon platform={pl} /> {platformLabel[pl]}</Chip>
           ))}
