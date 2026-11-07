@@ -96,9 +96,7 @@ export function VideoCard({ v, format, selected, onClick, inspiration, momentum 
                   </span>
                 </TooltipTrigger>
                 <TooltipContent className="max-w-60">
-                  {fmt(Math.round(momentum.perDay))} vues par jour depuis la publication,
-                  {" "}{momentum.ratio >= 1 ? "environ " : "environ "}{momentum.ratio.toLocaleString("fr-FR", { maximumFractionDigits: 1 })} fois
-                  {" "}{momentum.ratio >= 1 ? "au-dessus" : "sous"} la moyenne des autres vidéos de la recherche.
+                  {fmt(Math.round(momentum.perDay))} vues par jour depuis la publication — {momentum.ratio.toLocaleString("fr-FR", { maximumFractionDigits: 1 })} fois la moyenne des autres vidéos de la recherche.
                 </TooltipContent>
               </Tooltip>
             )}
