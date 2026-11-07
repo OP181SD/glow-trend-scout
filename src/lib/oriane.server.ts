@@ -6,6 +6,7 @@ export interface OrianeSearchInput {
   query: string;
   platform?: Platform | undefined;
   limit: number;
+  image?: { mediaType: "image/jpeg" | "image/png" | "image/webp"; base64: string } | undefined;
 }
 
 /** Vidéo normalisée, avant calcul du score (score/scoreReason ajoutés ensuite). */
