@@ -4,8 +4,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import type { Video } from "@/lib/types";
 import { cn } from "@/lib/utils";
-import { attractionTier, isTrending, viewsPerFollower, type AttractionTier } from "@/lib/scoring";
-import { Eye, Heart } from "lucide-react";
+import { attractionTier, isTrending, viewsPerFollower, type AttractionTier, type MomentumInfo } from "@/lib/scoring";
+import { Eye, Heart, TrendingDown, TrendingUp } from "lucide-react";
 
 const tierLabel: Record<AttractionTier, string> = {
   pepite: "Pépite virale",
@@ -28,9 +28,10 @@ interface Props {
   selected?: boolean;
   onClick?: () => void;
   inspiration?: { checked: boolean; disabled: boolean; onToggle: () => void };
+  momentum?: MomentumInfo | undefined;
 }
 
-export function VideoCard({ v, format, selected, onClick, inspiration }: Props) {
+export function VideoCard({ v, format, selected, onClick, inspiration, momentum }: Props) {
   const hook = v.onScreenText[0]?.replace(/[«»"]/g, "").trim();
   const vfr = viewsPerFollower(v);
   const tier = attractionTier(vfr);
@@ -79,7 +80,29 @@ export function VideoCard({ v, format, selected, onClick, inspiration }: Props) 
           </TooltipContent>
         </Tooltip>
         <div className="flex gap-3 font-mono text-xs text-muted-foreground">
-          <span className="inline-flex items-center gap-1"><Eye className="h-3 w-3" /><CountUp to={v.views} /></span>
+          <span className="inline-flex items-center gap-1">
+            <Eye className="h-3 w-3" /><CountUp to={v.views} />
+            {momentum && momentum.momentum !== "flat" && (
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span
+                    className={cn(
+                      "inline-flex cursor-help items-center rounded-full px-1.5 py-0.5",
+                      momentum.momentum === "up" ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground",
+                    )}
+                    aria-label={momentum.momentum === "up" ? "Vues en hausse" : "Vues en baisse"}
+                  >
+                    {momentum.momentum === "up" ? <TrendingUp className="h-3.5 w-3.5" /> : <TrendingDown className="h-3.5 w-3.5" />}
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-60">
+                  {fmt(Math.round(momentum.perDay))} vues par jour depuis la publication,
+                  {" "}{momentum.ratio >= 1 ? "environ " : "environ "}{momentum.ratio.toLocaleString("fr-FR", { maximumFractionDigits: 1 })} fois
+                  {" "}{momentum.ratio >= 1 ? "au-dessus" : "sous"} la moyenne des autres vidéos de la recherche.
+                </TooltipContent>
+              </Tooltip>
+            )}
+          </span>
           <span className="inline-flex items-center gap-1"><Heart className="h-3 w-3" /><CountUp to={v.engagementRate} decimals={1} suffix="%" /></span>
         </div>
         {inspiration && (

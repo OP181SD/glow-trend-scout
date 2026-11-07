@@ -37,7 +37,7 @@ describe("score", () => {
   });
 });
 
-import { recencyFactor, trendScore } from "@/lib/scoring";
+import { recencyFactor, trendScore, viewsMomentum, viewsPerDay } from "@/lib/scoring";
 describe("tendance", () => {
   const now = new Date("2026-11-07").getTime();
   it("une vidéo récente passe devant une vieille au même score", () => {
@@ -47,5 +47,31 @@ describe("tendance", () => {
   it("paliers de fraîcheur", () => {
     expect(recencyFactor("2026-10-20", now)).toBe(0.8);
     expect(recencyFactor("2026-09-01", now)).toBe(0.5);
+  });
+});
+
+describe("tendance des vues", () => {
+  const now = new Date("2026-11-07").getTime();
+  const v = (id: string, views: number, publishedAt: string, platform: Video["platform"] = "tiktok") =>
+    ({ id, platform, views, publishedAt });
+  it("vues par jour depuis la publication", () => {
+    expect(viewsPerDay(v("a", 1000, "2026-11-01"), now)).toBe(200);
+    // vidéo publiée aujourd'hui : jamais de division par 0
+    expect(viewsPerDay(v("b", 1000, "2026-11-07"), now)).toBe(2000);
+  });
+  it("flèche montante au-dessus de 1,25× la médiane, descendante sous 0,8×", () => {
+    const pool = [v("fast", 100_000, "2026-11-05"), v("mid", 20_000, "2026-11-05"), v("slow", 1_000, "2026-11-05")];
+    expect(viewsMomentum(pool[0]!, pool, now).momentum).toBe("up");
+    expect(viewsMomentum(pool[1]!, pool, now).momentum).toBe("flat");
+    expect(viewsMomentum(pool[2]!, pool, now).momentum).toBe("down");
+  });
+  it("compare seulement à la même plateforme", () => {
+    const pool = [v("t1", 100_000, "2026-11-05"), v("t2", 90_000, "2026-11-05"), v("i1", 500, "2026-11-05", "instagram"), v("i2", 400, "2026-11-05", "instagram")];
+    expect(viewsMomentum(pool[0]!, pool, now).momentum).toBe("up");
+    expect(viewsMomentum(pool[2]!, pool, now).momentum).toBe("up");
+  });
+  it("aucune flèche avec une seule vidéo", () => {
+    const only = [v("solo", 10_000, "2026-11-05")];
+    expect(viewsMomentum(only[0]!, only, now).momentum).toBe("flat");
   });
 });
