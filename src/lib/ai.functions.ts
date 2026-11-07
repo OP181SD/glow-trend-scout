@@ -18,7 +18,15 @@ const AnalysisSchema = z.object({
   brandMatch: z.object({ score: z.coerce.number().min(0).max(100), reason: str }),
 });
 
-const GenerateSchema = z.object({ prompt: str, kept: z.array(str), original: z.array(str) });
+const SceneSchema = z.object({
+  title: str.catch(""), start: z.coerce.number().catch(0), end: z.coerce.number().catch(0),
+  shot: str.catch(""), visual: str.catch(""), voiceOver: str.catch(""), onScreenText: str.catch(""),
+});
+const GenerateSchema = z.object({
+  prompt: str, kept: z.array(str), original: z.array(str),
+  scenes: z.array(SceneSchema).catch([]), totalSeconds: z.coerce.number().optional(),
+  music: str.catch(""), cta: str.catch(""),
+});
 
 function videoFacts(v: Video) {
   return {
