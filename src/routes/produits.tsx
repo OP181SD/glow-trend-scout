@@ -117,7 +117,7 @@ function AddProduct() {
           <div className="space-y-4">
             <Field label="Nom de la marque"><Input className="rounded-2xl" value={p.brand.name} onChange={(e) => setBrand({ name: e.target.value })} /></Field>
             <Field label="Ton">
-              <Select value={p.brand.tone || undefined} onValueChange={(tone) => setBrand({ tone })}>
+              <Select value={p.brand.tone} onValueChange={(tone) => setBrand({ tone })}>
                 <SelectTrigger className="rounded-2xl"><SelectValue placeholder="Choisir un ton" /></SelectTrigger>
                 <SelectContent>{TONES.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
               </Select>
