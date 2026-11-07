@@ -31,7 +31,7 @@ export function AppSidebar() {
       <div className="my-5 border-t border-dashed" />
       <div className="mb-2 flex items-center justify-between px-4">
         <span className="text-xs uppercase tracking-widest text-muted-foreground">Mes produits</span>
-        <Link to="/produits" aria-label="Nouveau produit" className="text-muted-foreground hover:text-primary"><Plus className="h-4 w-4" /></Link>
+        <Link to="/produits" aria-label="Trouver des inspirations" className="text-muted-foreground hover:text-primary"><Plus className="h-4 w-4" /></Link>
       </div>
       <div className="min-h-0 flex-1 space-y-1 overflow-y-auto">
         {s.products.length === 0 && <p className="px-4 text-sm text-muted-foreground">Aucun produit pour l'instant.</p>}
@@ -53,7 +53,7 @@ export function AppSidebar() {
           <span className={cn(s.demoMode ? "text-primary" : "text-muted-foreground")}>Mode démo</span>
           <Switch id="demo-mode" checked={s.demoMode} onCheckedChange={(v) => setState((st) => ({ ...st, demoMode: v }))} />
         </label>
-        {s.demoMode && <p className="px-4 text-xs text-muted-foreground">Résultats lus depuis la base, sans appel à Oriane.</p>}
+        {s.demoMode && <p className="px-4 text-xs text-muted-foreground">Vidéos enregistrées, sans appel réseau.</p>}
       </div>
     </aside>
   );

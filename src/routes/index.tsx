@@ -36,7 +36,7 @@ function Dashboard() {
         <BlurText text="Les pubs qui marchent, réinventées pour vous." className="max-w-3xl text-5xl font-bold leading-[1.02] tracking-tight md:text-6xl" />
         <FadeContent delay={0.4}>
           <p className="mt-5 max-w-lg text-lg text-muted-foreground">Créez un produit, on trouve les vidéos concurrentes qui performent et on écrit votre prompt vidéo IA.</p>
-          <Button asChild size="lg" className="mt-6 rounded-full"><Link to="/produits">Nouveau produit <ArrowRight /></Link></Button>
+          <Button asChild size="lg" className="mt-6 rounded-full"><Link to="/produits">Trouver des inspirations <ArrowRight /></Link></Button>
         </FadeContent>
 
         <div className="mt-14 grid grid-cols-2 gap-4 lg:grid-cols-4">
@@ -55,7 +55,7 @@ function Dashboard() {
           <section>
             <div className="flex items-end justify-between border-b border-dashed pb-4">
               <h2 className="text-2xl font-bold">Mes produits</h2>
-              <Button asChild size="sm" variant="outline" className="rounded-full"><Link to="/produits"><Plus /> Nouveau produit</Link></Button>
+              <Button asChild size="sm" variant="outline" className="rounded-full"><Link to="/produits"><Plus /> Trouver des inspirations</Link></Button>
             </div>
             {s.products.length === 0 ? (
               <p className="mt-6 text-muted-foreground">Aucun produit pour l'instant.</p>

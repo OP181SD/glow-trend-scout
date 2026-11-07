@@ -40,8 +40,8 @@ function TopVideos() {
     return (
       <div className="mx-auto max-w-3xl px-6 py-20 text-center">
         <BlurText text="Aucun produit sélectionné" className="text-4xl font-bold" />
-        <p className="mt-3 text-muted-foreground">Choisissez un dossier dans la barre latérale ou créez un produit.</p>
-        <Button asChild className="mt-6 rounded-full"><Link to="/produits">Créer un produit</Link></Button>
+        <p className="mt-3 text-muted-foreground">Choisissez un dossier ou lancez une recherche.</p>
+        <Button asChild className="mt-6 rounded-full"><Link to="/produits">Trouver des inspirations</Link></Button>
       </div>
     );
   }
@@ -79,7 +79,7 @@ function TopVideos() {
 
       <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
         <p className="inline-flex items-center gap-2 rounded-full border border-dashed px-4 py-2 text-sm text-muted-foreground">
-          <Info className="h-4 w-4 text-primary" /> Classement basé sur les vues, l'engagement public et l'attraction (vues ÷ abonnés), pas sur les performances publicitaires.
+          <Info className="h-4 w-4 text-primary" /> Classé par vues, engagement et vues ÷ abonnés — pas par performance pub.
         </p>
         {all && all.length > 0 && (
           <div className="flex items-center gap-3">
@@ -88,7 +88,7 @@ function TopVideos() {
               <Link to="/comparer" disabled={picked.length < 2}><Columns3 /> Comparer</Link>
             </Button>
             <Button size="sm" variant="outline" className="rounded-full border-dashed" disabled={saving} onClick={saveDemo}>
-              {saving ? <Loader2 className="animate-spin" /> : <Save />} Enregistrer pour la démo
+              {saving ? <Loader2 className="animate-spin" /> : <Save />} Démo
             </Button>
             <p className="text-sm text-muted-foreground">Inspirations <span className="font-mono text-foreground">{picked.length}/{MAX_INSPIRATIONS}</span></p>
             <Button asChild size="sm" className="rounded-full" disabled={picked.length === 0}>
@@ -101,7 +101,7 @@ function TopVideos() {
       {!all ? <SkeletonGrid /> : list.length === 0 ? (
         <div className="mt-10 rounded-[2rem] border border-dashed p-10 text-center">
           <p className="text-lg font-medium">Aucune vidéo trouvée</p>
-          <p className="mt-1 text-sm text-muted-foreground">{filter === "all" ? "Essayez de reformuler la description du produit." : `Aucun résultat sur ${platformLabel[filter]}. Essayez une autre plateforme.`}</p>
+          <p className="mt-1 text-sm text-muted-foreground">{filter === "all" ? "Reformulez la description." : `Rien sur ${platformLabel[filter]}.`}</p>
         </div>
       ) : (
         <TooltipProvider delayDuration={150}>
