@@ -8,7 +8,6 @@ import { Switch } from "@/components/ui/switch";
 const NAV = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
   { to: "/produits", label: "Rechercher", icon: Search },
-  { to: "/top-videos", label: "Inspirations", icon: PlaySquare },
   { to: "/generations", label: "Générations", icon: Sparkles },
 ] as const;
 
