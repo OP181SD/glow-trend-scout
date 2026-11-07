@@ -67,6 +67,11 @@ export function normalizeOriane(r: OrianeResult): RawVideo | null {
   };
 }
 
+/** Oriane n'accepte pas l'image fournie (format, taille ou fonction indisponible). */
+export class ImageSearchUnsupported extends Error {
+  constructor() { super("Recherche par image non acceptée"); }
+}
+
 export async function searchOriane(input: OrianeSearchInput): Promise<RawVideo[]> {
   let baseUrl: string = process.env["ORIANE_API_URL"]?.replace(/\s+/g, "") ?? "";
   const apiKey = process.env["ORIANE_API_KEY"]?.trim();
@@ -83,20 +88,37 @@ export async function searchOriane(input: OrianeSearchInput): Promise<RawVideo[]
   const full = input.query.trim().toLowerCase().slice(0, 200);
   const head = full.split(/[,.;:!?()]| au | aux | avec | pour | à base | de \d/i)[0]!.trim();
   const terms = [...new Set([full, head, head.split(/\s+/).slice(0, 2).join(" ")])].filter((t) => t.length >= 3);
+  const headers = { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" };
+  const root = baseUrl.replace(/\/$/, "");
+
+  // Recherche par image : on crée un « asset » image, puis on filtre par similarité visuelle.
+  let assetId: string | null = null;
+  if (input.image) {
+    let ok = false;
+    try {
+      const r = await fetch(`${root}/assets`, { method: "POST", headers, body: JSON.stringify({ type: "image", image: { type: "base64", mediaType: input.image.mediaType, base64: input.image.base64 } }) });
+      if (r.ok) { assetId = ((await r.json()) as { data?: { id?: string } }).data?.id ?? null; ok = !!assetId; }
+      else console.error("Oriane asset image HTTP", r.status);
+    } catch { /* traité ci-dessous */ }
+    if (!ok) throw new ImageSearchUnsupported();
+  }
+
   for (const t of terms) {
     const found = await fetchTerm(t);
     if (found.length) return found;
   }
-  return [];
+  // Image seule si le texte ne donne rien avec l'image.
+  return assetId ? fetchTerm(null) : [];
 
-  async function fetchTerm(term: string): Promise<RawVideo[]> {
+  async function fetchTerm(term: string | null): Promise<RawVideo[]> {
   const body = {
     operator: "and",
     filters: {
       format: { includes: ["video"] },
       platform: { includes: input.platform ? [input.platform] : ["tiktok", "instagram", "youtube"] },
+      ...(assetId ? { visualSimilarity: { includes: { values: [{ assetId, minScore: 0.2 }] } } } : {}),
     },
-    queries: [{
+    queries: term === null ? [] : [{
       operator: "or",
       filters: {
         caption: { includesExactly: { values: [term] } },
@@ -105,12 +127,12 @@ export async function searchOriane(input: OrianeSearchInput): Promise<RawVideo[]
       },
     }],
   };
-  const url = `${baseUrl.replace(/\/$/, "")}/contents/search?limit=${input.limit}&sort=viewsCount:desc`;
+  const url = `${root}/contents/search?limit=${input.limit}&sort=${assetId ? "visualSimilarity:desc" : "viewsCount:desc"}`;
   let res: Response;
   try {
     res = await fetch(url, {
       method: "POST",
-      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      headers,
       body: JSON.stringify(body),
     });
   } catch {
