@@ -10,33 +10,63 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as GenerationsRouteImport } from './routes/generations'
+import { Route as ProduitsRouteImport } from './routes/produits'
+import { Route as TopVideosRouteImport } from './routes/top-videos'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GenerationsRoute = GenerationsRouteImport.update({
+  id: '/generations',
+  path: '/generations',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ProduitsRoute = ProduitsRouteImport.update({
+  id: '/produits',
+  path: '/produits',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TopVideosRoute = TopVideosRouteImport.update({
+  id: '/top-videos',
+  path: '/top-videos',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/generations': typeof GenerationsRoute
+  '/produits': typeof ProduitsRoute
+  '/top-videos': typeof TopVideosRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/generations': typeof GenerationsRoute
+  '/produits': typeof ProduitsRoute
+  '/top-videos': typeof TopVideosRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/generations': typeof GenerationsRoute
+  '/produits': typeof ProduitsRoute
+  '/top-videos': typeof TopVideosRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths: '/' | '/generations' | '/produits' | '/top-videos'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/generations' | '/produits' | '/top-videos'
+  id: '__root__' | '/' | '/generations' | '/produits' | '/top-videos'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  GenerationsRoute: typeof GenerationsRoute
+  ProduitsRoute: typeof ProduitsRoute
+  TopVideosRoute: typeof TopVideosRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -48,11 +78,35 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/generations': {
+      id: '/generations'
+      path: '/generations'
+      fullPath: '/generations'
+      preLoaderRoute: typeof GenerationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/produits': {
+      id: '/produits'
+      path: '/produits'
+      fullPath: '/produits'
+      preLoaderRoute: typeof ProduitsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/top-videos': {
+      id: '/top-videos'
+      path: '/top-videos'
+      fullPath: '/top-videos'
+      preLoaderRoute: typeof TopVideosRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  GenerationsRoute: GenerationsRoute,
+  ProduitsRoute: ProduitsRoute,
+  TopVideosRoute: TopVideosRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
