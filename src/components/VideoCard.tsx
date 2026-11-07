@@ -17,7 +17,7 @@ export function VideoCard({ v, selected, onClick }: { v: Video; selected?: boole
             </span>
             <span className="rounded-full bg-ink/70 px-2 py-1 font-mono text-xs">{v.durationSeconds}s</span>
           </div>
-          <p className="text-xl font-bold leading-tight">« {v.onScreenText[0]} »</p>
+          <p className="text-xl font-bold leading-tight">« {v.onScreenText[0]?.replace(/[«»"]/g, "").trim()} »</p>
           <div>
             <p className="mb-3 text-sm font-medium">@{v.creator.handle}</p>
             <div className="grid grid-cols-3 gap-2 border-t border-dashed pt-3 font-mono text-xs">
