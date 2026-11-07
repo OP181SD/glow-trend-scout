@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import type { Json } from "@/integrations/supabase/types";
 import { scoreVideos } from "./scoring";
 import type { Video } from "./types";
 
@@ -26,7 +27,7 @@ export const searchVideos = createServerFn({ method: "POST" })
           .insert({ query: data.query, platform: data.platform ?? null, source: "oriane", data: { limit: data.limit, count: videos.length } })
           .select("id").single();
         if (videos.length) {
-          await supabaseAdmin.from("videos").upsert(videos.map((v) => ({ id: v.id, search_id: s?.id ?? null, query: data.query, platform: v.platform, score: v.score, data: v })));
+          await supabaseAdmin.from("videos").upsert(videos.map((v) => ({ id: v.id, search_id: s?.id ?? null, query: data.query, platform: v.platform, score: v.score, data: v as unknown as Json })));
         }
         if (videos.length) return { videos, source: "oriane" };
       } catch (e) {
