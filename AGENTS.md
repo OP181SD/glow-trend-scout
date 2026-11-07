@@ -37,3 +37,5 @@ use the editor.
 - Claude calls go through the built-in AI gateway SDK, only in `src/lib/claude.server.ts`; AI server functions are in `src/lib/ai.functions.ts`. Why: no provider key needed, model swappable in one place.
 - AI system prompts live as plain text in `src/prompts/*.system.txt` (imported with `?raw`). Why: editable without touching code.
 - Demo mode: client `demoMode` flag is passed to `searchVideos`; demo reads `pinned` rows (saved via "Enregistrer pour la démo") before latest rows, and analyses prefer stored ones. Why: reliable jury demo without Oriane.
+- Evil Charts files under `src/components/evilcharts/` are vendored with `@ts-nocheck` and need recharts v3. Why: third-party code not written for this strict tsconfig.
+- Aggregated insights are pure and tested in `src/lib/insights.ts`. Why: stats must stay verifiable.
