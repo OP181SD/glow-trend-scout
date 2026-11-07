@@ -1,6 +1,6 @@
-import { trendScore } from "@/lib/scoring";
+import { trendScore, viewsMomentum } from "@/lib/scoring";
 import { createFileRoute, Link, useHydrated, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { ArrowRight, BarChart3, Columns3, Info, Loader2, Save } from "lucide-react";
 import { BlurText, FadeContent } from "@/components/reactbits";
@@ -36,6 +36,12 @@ function TopVideos() {
   const [filter, setFilter] = useState<Platform | "all">("all");
   const [saving, setSaving] = useState(false);
   const [sort, setSort] = useState<"trend" | "score">("trend");
+  // Tendance des vues calculée sur toute la recherche, pas sur le filtre affiché.
+  const momentum = useMemo(() => {
+    const pool = product ? s.videos[product.id] ?? [] : [];
+    return new Map(pool.map((v) => [v.id, viewsMomentum(v, pool)]));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product?.id, s.videos]);
 
   if (!hydrated) return <div className="mx-auto max-w-6xl px-6 py-12 md:px-10"><Skeleton className="h-12 w-2/3 rounded-full" /><SkeletonGrid /></div>;
   if (!product) {
@@ -124,7 +130,7 @@ function TopVideos() {
               const checked = picked.includes(v.id);
               return (
                 <FadeContent key={v.id} delay={i * 0.06}>
-                  <VideoCard v={v} format={getCachedAnalysis(v.id)?.format} onClick={() => navigate({ to: "/analyse/$videoId", params: { videoId: v.id } })}
+                  <VideoCard v={v} format={getCachedAnalysis(v.id)?.format} momentum={momentum.get(v.id)} onClick={() => navigate({ to: "/analyse/$videoId", params: { videoId: v.id } })}
                     inspiration={{ checked, disabled: !checked && picked.length >= MAX_INSPIRATIONS, onToggle: () => { if (!toggleInspiration(product.id, v.id)) toast.error(`${MAX_INSPIRATIONS} inspirations maximum`); } }} />
                 </FadeContent>
               );

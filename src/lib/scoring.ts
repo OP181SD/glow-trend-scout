@@ -66,3 +66,39 @@ export function trendScore(v: Pick<Video, "score" | "publishedAt">, now = Date.n
 
 export const isTrending = (v: Pick<Video, "score" | "publishedAt">, now = Date.now()) =>
   recencyFactor(v.publishedAt, now) >= 0.8 && v.score >= 60;
+
+/** Vues par jour depuis la publication (plancher à ½ jour pour une vidéo du jour). */
+export function viewsPerDay(v: Pick<Video, "views" | "publishedAt">, now = Date.now()): number {
+  const days = Math.max((now - new Date(v.publishedAt).getTime()) / 86_400_000, 0.5);
+  return v.views / days;
+}
+
+export type Momentum = "up" | "down" | "flat";
+
+export interface MomentumInfo {
+  momentum: Momentum;
+  /** Vues/jour de la vidéo ÷ médiane des vues/jour de la recherche. */
+  ratio: number;
+  perDay: number;
+}
+
+/**
+ * Tendance des vues : vitesse de la vidéo (vues/jour) comparée à la médiane des
+ * vidéos de la même plateforme. ≥ 1,25× la médiane = up, ≤ 0,8× = down.
+ */
+export function viewsMomentum(
+  v: Pick<Video, "views" | "publishedAt" | "platform">,
+  pool: Pick<Video, "views" | "publishedAt" | "platform">[],
+  now = Date.now(),
+): MomentumInfo {
+  const same = pool.filter((o) => o.platform === v.platform);
+  const base = same.length >= 2 ? same : pool;
+  const perDay = viewsPerDay(v, now);
+  if (base.length < 2) return { momentum: "flat", ratio: 1, perDay };
+  const speeds = base.map((o) => viewsPerDay(o, now)).sort((a, b) => a - b);
+  const mid = Math.floor(speeds.length / 2);
+  const median = speeds.length % 2 ? speeds[mid]! : (speeds[mid - 1]! + speeds[mid]!) / 2;
+  if (median <= 0) return { momentum: "flat", ratio: 1, perDay };
+  const ratio = perDay / median;
+  return { momentum: ratio >= 1.25 ? "up" : ratio <= 0.8 ? "down" : "flat", ratio, perDay };
+}

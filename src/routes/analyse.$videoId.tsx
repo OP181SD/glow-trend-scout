@@ -1,14 +1,17 @@
 import { createFileRoute, Link, useHydrated } from "@tanstack/react-router";
 import { toast } from "sonner";
-import { ArrowLeft, Check, ExternalLink, Plus } from "lucide-react";
+import { ArrowLeft, Check, ExternalLink, Plus, TrendingDown, TrendingUp } from "lucide-react";
 import { BlurText, CountUp, FadeContent, ShinyText } from "@/components/reactbits";
 import { PlatformIcon, platformLabel } from "@/components/PlatformIcon";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useEffect, useState } from "react";
 import { analyze, getVideo } from "@/lib/api";
 import { activeProduct, MAX_INSPIRATIONS, toggleInspiration, useStore } from "@/lib/store";
+import { viewsMomentum } from "@/lib/scoring";
 import type { Analysis, Video } from "@/lib/types";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/analyse/$videoId")({
   head: () => ({
@@ -79,8 +82,28 @@ function AnalysePage() {
     else toast.success(checked ? "Retirée des inspirations" : "Ajoutée aux inspirations");
   }
 
+  const pool = (product ? s.videos[product.id] : undefined) ?? Object.values(s.videos).flat();
+  const mom = viewsMomentum(v, pool);
+  const trend = mom.momentum === "flat" ? null : (
+    <TooltipProvider delayDuration={150}>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <span
+            className={cn("ml-2 inline-flex cursor-help items-center rounded-full px-1.5 py-0.5 align-middle", mom.momentum === "up" ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground")}
+            aria-label={mom.momentum === "up" ? "Vues en hausse" : "Vues en baisse"}
+          >
+            {mom.momentum === "up" ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
+          </span>
+        </TooltipTrigger>
+        <TooltipContent className="max-w-60">
+          {new Intl.NumberFormat("fr-FR", { notation: "compact", maximumFractionDigits: 1 }).format(Math.round(mom.perDay))} vues par jour depuis la publication — {mom.ratio.toLocaleString("fr-FR", { maximumFractionDigits: 1 })} fois la moyenne des autres vidéos de la recherche.
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+
   const metrics = [
-    { label: "Vues", node: <CountUp to={v.views} /> },
+    { label: "Vues", node: <span className="inline-flex items-center"><CountUp to={v.views} />{trend}</span> },
     { label: "Engagement", node: <CountUp to={v.engagementRate} decimals={1} suffix="%" /> },
     { label: "Attraction", node: v.creator.followers > 0 ? <CountUp to={v.views / v.creator.followers} decimals={1} suffix="×" /> : <span className="font-mono">—</span> },
     { label: "Score créa", node: <><CountUp to={v.score} /><span className="text-muted-foreground">/100</span></> },
