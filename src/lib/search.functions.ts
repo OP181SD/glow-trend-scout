@@ -12,7 +12,7 @@ const Input = z.object({
 export type SearchResult = { videos: Video[]; source: "oriane" | "demo" };
 
 export const searchVideos = createServerFn({ method: "POST" })
-  .inputValidator((data: z.input<typeof Input>) => Input.parse(data))
+  .validator((data: z.input<typeof Input>) => Input.parse(data))
   .handler(async ({ data }): Promise<SearchResult> => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const demo = process.env["DEMO_MODE"] === "true";
