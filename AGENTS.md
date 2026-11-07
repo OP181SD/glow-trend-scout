@@ -28,3 +28,9 @@ use the editor.
   own key and store it in Secrets.
 - **Secrets.** Lovable manages them. Do not put secret values in the repo.
 <!-- LOVABLE:END -->
+
+## Project rules
+- All Oriane API knowledge (URL, request body, response mapping) lives only in `src/lib/oriane.server.ts`; swap providers or formats there. Why: the provider format may change.
+- Video search runs as a TanStack server function (`src/lib/search.functions.ts`), not a Supabase Edge Function. Why: this stack forbids new Edge Functions; keys stay server-side.
+- Database tables are server-only (RLS on, no anon/authenticated policies); the app reads/writes them through server functions. Why: the app has no sign-in yet.
+- Scoring is pure and tested in `src/lib/scoring.ts`. Why: ranking rule must stay verifiable.

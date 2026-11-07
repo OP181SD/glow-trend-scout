@@ -1,5 +1,6 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
+import type { Json } from "@/integrations/supabase/types";
 import { scoreVideos } from "./scoring";
 import type { Video } from "./types";
 
@@ -12,7 +13,7 @@ const Input = z.object({
 export type SearchResult = { videos: Video[]; source: "oriane" | "demo" };
 
 export const searchVideos = createServerFn({ method: "POST" })
-  .inputValidator((data: z.input<typeof Input>) => Input.parse(data))
+  .validator((data: z.input<typeof Input>) => Input.parse(data))
   .handler(async ({ data }): Promise<SearchResult> => {
     const { supabaseAdmin } = await import("@/integrations/supabase/client.server");
     const demo = process.env["DEMO_MODE"] === "true";
@@ -26,7 +27,7 @@ export const searchVideos = createServerFn({ method: "POST" })
           .insert({ query: data.query, platform: data.platform ?? null, source: "oriane", data: { limit: data.limit, count: videos.length } })
           .select("id").single();
         if (videos.length) {
-          await supabaseAdmin.from("videos").upsert(videos.map((v) => ({ id: v.id, search_id: s?.id ?? null, query: data.query, platform: v.platform, score: v.score, data: v })));
+          await supabaseAdmin.from("videos").upsert(videos.map((v) => ({ id: v.id, search_id: s?.id ?? null, query: data.query, platform: v.platform, score: v.score, data: v as unknown as Json })));
         }
         if (videos.length) return { videos, source: "oriane" };
       } catch (e) {
