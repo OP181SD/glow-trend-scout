@@ -80,7 +80,7 @@ export async function searchOriane(input: OrianeSearchInput): Promise<RawVideo[]
 
   // Oriane cherche l'expression exacte : une phrase entière ne trouve rien.
   // On essaie la requête complète, puis son début (« Crème anti-âge »), puis ses 2 premiers mots.
-  const full = input.query.trim().slice(0, 200);
+  const full = input.query.trim().toLowerCase().slice(0, 200);
   const head = full.split(/[,.;:!?()]| au | aux | avec | pour | à base | de \d/i)[0]!.trim();
   const terms = [...new Set([full, head, head.split(/\s+/).slice(0, 2).join(" ")])].filter((t) => t.length >= 3);
   for (const t of terms) {
