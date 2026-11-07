@@ -25,9 +25,11 @@ export function scoreVideos(videos: Scorable[]): Video[] {
     const engRank = percentileRank(pool.map((o) => o.engagementRate), v.engagementRate);
     const viewRank = percentileRank(allViews, v.views);
     const score = Math.round((0.6 * engRank + 0.4 * viewRank) * 100);
-    const top = Math.max(1, Math.round((1 - engRank) * 100));
+    const position = pool.filter((o) => o.engagementRate > v.engagementRate).length + 1;
+    const top = Math.ceil((position / pool.length) * 100);
     const scope = pool === samePlatform && samePlatform.length < videos.length ? ` parmi les vidéos ${v.platform === "instagram" ? "Instagram" : v.platform === "tiktok" ? "TikTok" : "YouTube"}` : "";
-    const scoreReason = `Engagement de ${pct(v.engagementRate)} %, top ${top} %${scope} de la recherche.`;
+    const rankText = top <= 50 ? `top ${top} %${scope} de la recherche` : `sous la médiane${scope} de la recherche`;
+    const scoreReason = `Engagement de ${pct(v.engagementRate)} %, ${rankText}.`;
     return { ...v, score, scoreReason };
   });
   return scored.sort((a, b) => b.score - a.score);
