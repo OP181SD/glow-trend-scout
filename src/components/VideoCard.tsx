@@ -64,10 +64,9 @@ export function VideoCard({ v, format, selected, onClick, inspiration }: Props) 
         <Tooltip>
           <TooltipTrigger asChild>
             <div className="cursor-help space-y-1.5 rounded-2xl border border-dashed px-3 py-2">
-              <div className="flex items-center justify-between gap-2">
-                <span className="text-[11px] text-muted-foreground">Attraction</span>
-                <span className={cn("whitespace-nowrap rounded-full px-2 py-0.5 text-[10px] font-medium", tierStyle)}>{tierLabel[tier]}</span>
-                <span className="ml-auto font-mono text-sm text-primary">{attr === null ? "—" : <CountUp to={attr} />}<span className="text-[10px] text-muted-foreground">/100</span></span>
+              <div className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-2">
+                <span className={cn("min-w-0 truncate rounded-full px-2.5 py-1 text-center text-xs font-semibold", tierStyle)}>{tierLabel[tier]}</span>
+                <span className="shrink-0 font-mono text-base leading-none text-primary">{attr === null ? "—" : <CountUp to={attr} />}<span className="text-[10px] text-muted-foreground">/100</span></span>
               </div>
               <div className="h-1.5 overflow-hidden rounded-full bg-muted">
                 <div className="h-full rounded-full bg-primary transition-all" style={{ width: `${attr ?? 0}%` }} />
