@@ -72,7 +72,11 @@ export async function searchOriane(input: OrianeSearchInput): Promise<RawVideo[]
   const apiKey = process.env["ORIANE_API_KEY"]?.trim();
   if (!baseUrl || !apiKey) throw new Error("Oriane non configuré");
   if (!/^https?:\/\//.test(baseUrl)) baseUrl = `https://${baseUrl}`;
-  try { new URL(baseUrl); } catch { throw new Error("ORIANE_API_URL n'est pas une adresse valide"); }
+  try {
+    if (!new URL(baseUrl).hostname.includes(".")) throw new Error();
+  } catch {
+    throw new Error("ORIANE_API_URL n'est pas une adresse valide");
+  }
 
   const term = input.query.trim().slice(0, 200);
   const body = {
@@ -91,11 +95,17 @@ export async function searchOriane(input: OrianeSearchInput): Promise<RawVideo[]
     }],
   };
   const url = `${baseUrl.replace(/\/$/, "")}/contents/search?limit=${input.limit}&sort=viewsCount:desc`;
-  const res = await fetch(url, {
-    method: "POST",
-    headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
+  let res: Response;
+  try {
+    res = await fetch(url, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+  } catch {
+    // Message générique : l'erreur réseau d'origine peut contenir l'adresse configurée.
+    throw new Error("Oriane injoignable");
+  }
   if (!res.ok) {
     // On ne journalise que le statut : jamais la clé ni les en-têtes.
     throw new Error(`Oriane a répondu ${res.status}`);
