@@ -1,6 +1,7 @@
 # Roadmap
 
 - [x] Renommer « Ads inspirées » en « TrendMe » partout
-- [ ] Logo TrendMe : conserver le concept courbe + point, version multicolore
-- [ ] Installer le logo : barre latérale, page d'accueil, favicon
-- [ ] Supprimer le logo non retenu (icône flèche)
+- [x] Logo TrendMe : concept courbe + point, version multicolore
+- [x] Installer le logo : barre latérale, page d'accueil, favicon
+- [x] Supprimer le logo non retenu (icône flèche)
+- [x] Enlever le bloc de chiffres sous l'accueil (Recherches / Vidéos / Analyses / Générations / Vues cumulées)
