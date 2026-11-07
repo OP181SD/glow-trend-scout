@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { ArrowRight, Folder, Plus } from "lucide-react";
 import { OrbitHero } from "@/components/OrbitHero";
-import { BlurText, CountUp, FadeContent } from "@/components/reactbits";
+import { BlurText, FadeContent } from "@/components/reactbits";
 import { Button } from "@/components/ui/button";
 import { setState, useStore } from "@/lib/store";
 import logoTrendme from "@/assets/logo-trendme-color.png";
