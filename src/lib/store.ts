@@ -1,11 +1,11 @@
 import { useSyncExternalStore } from "react";
 import type { GeneratedPrompt, Product, Video } from "./types";
 
-export interface Generation { id: string; productId: string; video: Video; result: GeneratedPrompt; createdAt: string }
+export interface Generation { id: string; productId: string; videos: Video[]; result: GeneratedPrompt; createdAt: string }
 export interface SearchEntry { id: string; productId: string; query: string; count: number; createdAt: string }
 interface State { inspirations: Record<string, string[]>; searches: SearchEntry[]; products: Product[]; activeProductId: string | null; videos: Record<string, Video[]>; analyses: number; generations: Generation[] }
 
-const KEY = "ads-inspirees-v1";
+const KEY = "ads-inspirees-v2";
 const EMPTY: State = { inspirations: {}, searches: [], products: [], activeProductId: null, videos: {}, analyses: 0, generations: [] };
 let state: State = EMPTY;
 let loaded = false;

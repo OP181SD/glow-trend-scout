@@ -47,8 +47,22 @@ export interface Product {
 
 export type TargetTool = "Veo" | "Sora" | "Kling" | "Runway";
 
+export interface PromptScene {
+  title: string;
+  start: number;
+  end: number;
+  shot: string;
+  visual: string;
+  voiceOver: string;
+  onScreenText: string;
+}
+
 export interface GeneratedPrompt {
   prompt: string;
+  scenes: PromptScene[];
+  totalSeconds: number;
+  music: string;
+  cta: string;
   kept: string[];
   original: string[];
   targetTool: TargetTool;
