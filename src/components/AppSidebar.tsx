@@ -4,6 +4,7 @@ import { Folder, PanelLeftClose, PanelLeftOpen, FolderOpen, LayoutDashboard, Pla
 import { setState, useStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
 import { Switch } from "@/components/ui/switch";
+import logoTrendme from "@/assets/logo-trendme-color.png";
 
 const NAV = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -31,9 +32,8 @@ export function AppSidebar() {
   return (
     <aside className="sticky top-0 hidden h-screen w-64 shrink-0 flex-col border-r border-dashed bg-sidebar p-4 md:flex">
       <div className="mb-8 flex items-center justify-between px-2 pt-2">
-        <Link to="/" className="flex items-center gap-2">
-          <span className="flex h-9 w-9 items-center justify-center rounded-2xl bg-primary text-primary-foreground"><Sparkles className="h-4 w-4" /></span>
-          <span className="text-lg font-bold tracking-tight">TrendMe</span>
+        <Link to="/" className="flex items-center gap-2" aria-label="TrendMe — accueil">
+          <img src={logoTrendme} alt="TrendMe" width={1152} height={576} className="h-7 w-auto" />
         </Link>
         <button onClick={() => setOpen(false)} aria-label="Ranger le menu" className="rounded-full p-2 text-muted-foreground hover:bg-sidebar-accent hover:text-foreground"><PanelLeftClose className="h-4 w-4" /></button>
       </div>
