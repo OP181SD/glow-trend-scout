@@ -32,6 +32,7 @@ function GenerationPage() {
   const navigate = useNavigate();
   const product = activeProduct(s);
   const [tool, setTool] = useState<TargetTool>("Veo");
+  const [mode, setMode] = useState<"ia" | "humain">("humain");
   const [loading, setLoading] = useState(false);
 
   if (!hydrated) return null;
@@ -52,7 +53,7 @@ function GenerationPage() {
       return;
     }
     const id = crypto.randomUUID();
-    setState((st) => ({ ...st, generations: [{ id, productId: product.id, videos, result, createdAt: new Date().toISOString() }, ...st.generations] }));
+    setState((st) => ({ ...st, generations: [{ id, productId: product.id, videos, result, mode, createdAt: new Date().toISOString() }, ...st.generations] }));
     setLoading(false);
     navigate({ to: "/prompt/$id", params: { id } });
   }
@@ -102,13 +103,22 @@ function GenerationPage() {
         )}
       </div>
 
-      <div className="mt-8 flex flex-wrap items-center gap-2 rounded-[1.75rem] border border-dashed bg-card p-5">
-        <span className="mr-2 text-sm text-muted-foreground">Format du prompt</span>
-        {TOOLS.map((t) => (
+      <div className="mt-8 grid gap-3 sm:grid-cols-2" role="radiogroup" aria-label="Qui tourne la vidéo">
+        {([["humain", "Je la tourne moi-même", "Script de tournage au téléphone, prêt à filmer"], ["ia", "Générée par IA", "Prompt pour Veo, Sora, Kling ou Runway"]] as const).map(([m, label, desc]) => (
+          <button key={m} role="radio" aria-checked={mode === m} onClick={() => setMode(m)} className={cn("rounded-[1.5rem] border border-dashed bg-card p-5 text-left", mode === m && "border-solid border-primary bg-primary/10")}>
+            <p className="font-bold">{label}</p>
+            <p className="mt-1 text-sm text-muted-foreground">{desc}</p>
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-4 flex flex-wrap items-center gap-2 rounded-[1.75rem] border border-dashed bg-card p-5">
+        {mode === "ia" && <span className="mr-2 text-sm text-muted-foreground">Format du prompt</span>}
+        {mode === "ia" && TOOLS.map((t) => (
           <button key={t} onClick={() => setTool(t)} className={cn("rounded-full border border-dashed px-4 py-2 text-sm", tool === t ? "border-solid border-primary bg-primary/15" : "text-muted-foreground")}>{t}</button>
         ))}
         <Button size="lg" className="ml-auto min-w-52 rounded-full" onClick={run} disabled={loading || videos.length === 0}>
-          {loading ? <ShinyText text="Écriture de votre pub…" /> : <><Sparkles /> Générer ma pub</>}
+          {loading ? <ShinyText text="Écriture de votre pub…" /> : <><Sparkles /> {mode === "humain" ? "Générer mon script" : "Générer ma pub"}</>}
         </Button>
       </div>
     </div>

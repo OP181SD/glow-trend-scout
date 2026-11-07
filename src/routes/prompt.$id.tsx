@@ -62,7 +62,7 @@ function PromptPage() {
     <div className="mx-auto max-w-5xl px-6 py-12 md:px-10">
       <Button asChild variant="ghost" className="-ml-3 mb-4 rounded-full"><Link to="/generation"><ArrowLeft /> Génération</Link></Button>
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <BlurText text={`Votre prompt pour ${r.targetTool}`} className="text-5xl font-bold tracking-tight" />
+        <BlurText text={g.mode === "humain" ? "Votre script de tournage" : `Votre prompt pour ${r.targetTool}`} className="text-5xl font-bold tracking-tight" />
         <p className="font-mono text-sm text-muted-foreground">{r.scenes.length} scènes · {r.totalSeconds} s</p>
       </div>
 
@@ -75,7 +75,7 @@ function PromptPage() {
         ))}
       </div>
 
-      <Tabs defaultValue="prompt" className="mt-6">
+      <Tabs defaultValue={g.mode === "humain" ? "script" : "prompt"} className="mt-6">
         <TabsList className="rounded-full">
           <TabsTrigger value="prompt" className="rounded-full">Prompt IA</TabsTrigger>
           <TabsTrigger value="script" className="rounded-full">Script de tournage</TabsTrigger>

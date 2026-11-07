@@ -1,7 +1,7 @@
 import { useSyncExternalStore } from "react";
 import type { GeneratedPrompt, Product, Video } from "./types";
 
-export interface Generation { id: string; productId: string; videos: Video[]; result: GeneratedPrompt; createdAt: string }
+export interface Generation { id: string; productId: string; videos: Video[]; result: GeneratedPrompt; mode?: "ia" | "humain"; createdAt: string }
 export interface SearchEntry { id: string; productId: string; query: string; count: number; createdAt: string }
 interface State { inspirations: Record<string, string[]>; searches: SearchEntry[]; products: Product[]; activeProductId: string | null; videos: Record<string, Video[]>; analyses: number; generations: Generation[]; demoMode: boolean; imageSearchUnsupported: boolean }
 
