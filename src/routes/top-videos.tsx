@@ -1,14 +1,14 @@
 import { createFileRoute, Link, useHydrated, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { toast } from "sonner";
-import { ArrowRight, Info } from "lucide-react";
+import { ArrowRight, Info, Loader2, Save } from "lucide-react";
 import { BlurText, FadeContent } from "@/components/reactbits";
 import { PlatformIcon, platformLabel } from "@/components/PlatformIcon";
 import { VideoCard } from "@/components/VideoCard";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TooltipProvider } from "@/components/ui/tooltip";
-import { getAnalysis } from "@/lib/api";
+import { analyze, getCachedAnalysis, saveSearchForDemo } from "@/lib/api";
 import { activeProduct, MAX_INSPIRATIONS, toggleInspiration, useStore } from "@/lib/store";
 import type { Platform } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -33,6 +33,7 @@ function TopVideos() {
   const navigate = useNavigate();
   const hydrated = useHydrated();
   const [filter, setFilter] = useState<Platform | "all">("all");
+  const [saving, setSaving] = useState(false);
 
   if (!hydrated) return <div className="mx-auto max-w-6xl px-6 py-12 md:px-10"><Skeleton className="h-12 w-2/3 rounded-full" /><SkeletonGrid /></div>;
   if (!product) {
@@ -47,6 +48,20 @@ function TopVideos() {
   const all = s.videos[product.id];
   const picked = s.inspirations[product.id] ?? [];
   const list = (all ?? []).filter((v) => filter === "all" || v.platform === filter);
+
+  async function saveDemo() {
+    if (!product || !all?.length) return;
+    setSaving(true);
+    // Analyse les vidéos pas encore analysées, puis garde tout en base.
+    await Promise.allSettled(all.map((v) => analyze(v, product, s.demoMode)));
+    try {
+      const r = await saveSearchForDemo(product.description || product.name, all);
+      toast.success("Enregistré pour la démo", { description: `${r.videos} vidéos et ${r.analyses} analyses gardées en base.` });
+    } catch {
+      toast.error("L'enregistrement a échoué.", { description: "Réessayez dans un instant." });
+    }
+    setSaving(false);
+  }
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-12 md:px-10">
@@ -68,6 +83,9 @@ function TopVideos() {
         </p>
         {all && all.length > 0 && (
           <div className="flex items-center gap-3">
+            <Button size="sm" variant="outline" className="rounded-full border-dashed" disabled={saving} onClick={saveDemo}>
+              {saving ? <Loader2 className="animate-spin" /> : <Save />} Enregistrer pour la démo
+            </Button>
             <p className="text-sm text-muted-foreground">Inspirations <span className="font-mono text-foreground">{picked.length}/{MAX_INSPIRATIONS}</span></p>
             <Button asChild size="sm" className="rounded-full" disabled={picked.length === 0}>
               <Link to="/generation" disabled={picked.length === 0}>Générer <ArrowRight /></Link>
@@ -88,7 +106,7 @@ function TopVideos() {
               const checked = picked.includes(v.id);
               return (
                 <FadeContent key={v.id} delay={i * 0.06}>
-                  <VideoCard v={v} format={getAnalysis(v.id, v)?.format} onClick={() => navigate({ to: "/analyse/$videoId", params: { videoId: v.id } })}
+                  <VideoCard v={v} format={getCachedAnalysis(v.id)?.format} onClick={() => navigate({ to: "/analyse/$videoId", params: { videoId: v.id } })}
                     inspiration={{ checked, disabled: !checked && picked.length >= MAX_INSPIRATIONS, onToggle: () => { if (!toggleInspiration(product.id, v.id)) toast.error(`${MAX_INSPIRATIONS} inspirations maximum`); } }} />
                 </FadeContent>
               );

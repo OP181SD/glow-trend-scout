@@ -4,7 +4,8 @@ import { Sparkles, X } from "lucide-react";
 import { BlurText, FadeContent, ShinyText } from "@/components/reactbits";
 import { PlatformIcon, platformLabel } from "@/components/PlatformIcon";
 import { Button } from "@/components/ui/button";
-import { generate, getAnalysis, getVideo } from "@/lib/api";
+import { toast } from "sonner";
+import { generate, getVideo } from "@/lib/api";
 import { activeProduct, setState, toggleInspiration, useStore } from "@/lib/store";
 import type { TargetTool, Video } from "@/lib/types";
 import { cn } from "@/lib/utils";
@@ -42,7 +43,14 @@ function GenerationPage() {
   async function run() {
     if (!product) return;
     setLoading(true);
-    const result = await generate(product, videos.map((video) => ({ video, analysis: getAnalysis(video.id, video)! })), tool);
+    let result;
+    try {
+      result = await generate(product, videos, tool, s.demoMode);
+    } catch {
+      setLoading(false);
+      toast.error("La génération a échoué.", { description: "Réessayez dans un instant." });
+      return;
+    }
     const id = crypto.randomUUID();
     setState((st) => ({ ...st, generations: [{ id, productId: product.id, videos, result, createdAt: new Date().toISOString() }, ...st.generations] }));
     setLoading(false);

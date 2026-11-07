@@ -3,10 +3,10 @@ import type { GeneratedPrompt, Product, Video } from "./types";
 
 export interface Generation { id: string; productId: string; videos: Video[]; result: GeneratedPrompt; createdAt: string }
 export interface SearchEntry { id: string; productId: string; query: string; count: number; createdAt: string }
-interface State { inspirations: Record<string, string[]>; searches: SearchEntry[]; products: Product[]; activeProductId: string | null; videos: Record<string, Video[]>; analyses: number; generations: Generation[] }
+interface State { inspirations: Record<string, string[]>; searches: SearchEntry[]; products: Product[]; activeProductId: string | null; videos: Record<string, Video[]>; analyses: number; generations: Generation[]; demoMode: boolean }
 
 const KEY = "ads-inspirees-v2";
-const EMPTY: State = { inspirations: {}, searches: [], products: [], activeProductId: null, videos: {}, analyses: 0, generations: [] };
+const EMPTY: State = { inspirations: {}, searches: [], products: [], activeProductId: null, videos: {}, analyses: 0, generations: [], demoMode: false };
 let state: State = EMPTY;
 let loaded = false;
 const subs = new Set<() => void>();
@@ -16,6 +16,7 @@ function load() {
   loaded = true;
   try { const raw = localStorage.getItem(KEY); if (raw) state = { ...EMPTY, ...JSON.parse(raw) }; } catch { /* ignore */ }
 }
+export function getState(): State { load(); return state; }
 export function setState(fn: (s: State) => State) {
   state = fn(state);
   try { localStorage.setItem(KEY, JSON.stringify(state)); } catch { /* ignore */ }

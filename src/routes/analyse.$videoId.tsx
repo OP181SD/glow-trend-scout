@@ -1,12 +1,12 @@
 import { createFileRoute, Link, useHydrated } from "@tanstack/react-router";
 import { toast } from "sonner";
 import { ArrowLeft, Check, ExternalLink, Plus } from "lucide-react";
-import { BlurText, CountUp, FadeContent } from "@/components/reactbits";
+import { BlurText, CountUp, FadeContent, ShinyText } from "@/components/reactbits";
 import { PlatformIcon, platformLabel } from "@/components/PlatformIcon";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
-import { analyzeWithAI, getAnalysis, getVideo } from "@/lib/api";
+import { analyze, getVideo } from "@/lib/api";
 import { activeProduct, MAX_INSPIRATIONS, toggleInspiration, useStore } from "@/lib/store";
 import type { Analysis, Video } from "@/lib/types";
 
@@ -40,17 +40,32 @@ function AnalysePage() {
   const s = useStore();
   const hydrated = useHydrated();
   const product = activeProduct(s);
-  const [ai, setAi] = useState<{ id: string; a: Analysis } | null>(null);
+  const [ai, setAi] = useState<{ id: string; a?: Analysis; error?: boolean } | null>(null);
+  const [attempt, setAttempt] = useState(0);
   const v = hydrated ? getVideo(videoId, Object.values(s.videos).flat()) : undefined;
   useEffect(() => {
-    if (!v) return;
+    if (!v || !product) return;
     let alive = true;
-    analyzeWithAI(v, product).then((a) => { if (alive) setAi({ id: v.id, a }); });
+    analyze(v, product, s.demoMode)
+      .then((a) => { if (alive) setAi({ id: v.id, a }); })
+      .catch(() => { if (alive) setAi({ id: v.id, error: true }); });
     return () => { alive = false; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [v?.id, product?.id]);
+  }, [v?.id, product?.id, attempt]);
   if (!hydrated) return null;
-  const a = v && (ai?.id === v.id ? ai.a : getAnalysis(v.id, v));
+  const a = v && ai?.id === v.id ? ai.a : undefined;
+  if (v && product && !a) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 p-12 text-center">
+        {ai?.id === v.id && ai.error ? (
+          <>
+            <p className="text-lg font-medium">L'analyse de cette vidéo n'a pas abouti.</p>
+            <Button className="rounded-full" onClick={() => { setAi(null); setAttempt((n) => n + 1); }}>Réessayer</Button>
+          </>
+        ) : <ShinyText text="Analyse de la vidéo en cours…" className="text-2xl font-bold" />}
+      </div>
+    );
+  }
   if (!v || !a) return <div className="p-12 text-center text-muted-foreground">Vidéo introuvable. <Link to="/top-videos" className="text-primary">Retour aux vidéos</Link></div>;
   const picked = product ? s.inspirations[product.id] ?? [] : [];
   const checked = picked.includes(v.id);

@@ -2,6 +2,7 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { Folder, FolderOpen, LayoutDashboard, Package, PlaySquare, Plus, Sparkles } from "lucide-react";
 import { setState, useStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
+import { Switch } from "@/components/ui/switch";
 
 const NAV = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
@@ -46,6 +47,13 @@ export function AppSidebar() {
             </button>
           );
         })}
+      </div>
+      <div className="mt-4 border-t border-dashed pt-4">
+        <label htmlFor="demo-mode" className="flex cursor-pointer items-center justify-between rounded-full px-4 py-2 text-sm">
+          <span className={cn(s.demoMode ? "text-primary" : "text-muted-foreground")}>Mode démo</span>
+          <Switch id="demo-mode" checked={s.demoMode} onCheckedChange={(v) => setState((st) => ({ ...st, demoMode: v }))} />
+        </label>
+        {s.demoMode && <p className="px-4 text-xs text-muted-foreground">Résultats lus depuis la base, sans appel à Oriane.</p>}
       </div>
     </aside>
   );
