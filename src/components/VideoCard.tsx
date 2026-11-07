@@ -5,6 +5,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import type { Video } from "@/lib/types";
 import { cn } from "@/lib/utils";
 import { attractionTier, isTrending, viewsPerFollower, type AttractionTier, type MomentumInfo } from "@/lib/scoring";
+import { shadowReach } from "@/lib/filters";
 import { Eye, Heart, TrendingDown, TrendingUp } from "lucide-react";
 
 const tierLabel: Record<AttractionTier, string> = {
@@ -52,6 +53,8 @@ export function VideoCard({ v, format, selected, onClick, inspiration, momentum 
           <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-ink/70 backdrop-blur">
             <PlatformIcon platform={v.platform} className="h-3.5 w-3.5" />
           </span>
+          {shadowReach(v) === "viral" && <span className="ml-auto rounded-full bg-ink/70 px-2.5 py-1 text-[11px] backdrop-blur">Shadow reach ↑</span>}
+          {shadowReach(v) === "bridee" && <span className="ml-auto rounded-full bg-destructive/80 px-2.5 py-1 text-[11px] text-destructive-foreground">Portée bridée</span>}
           {isTrending(v) && <span className="ml-auto mr-1 rounded-full bg-primary px-2.5 py-1 text-[11px] font-medium text-primary-foreground">Tendance</span>}
           {format && <span className="rounded-full bg-ink/70 px-2.5 py-1 text-[11px] backdrop-blur">{format}</span>}
         </div>
