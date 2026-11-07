@@ -58,6 +58,9 @@ export function Stepper({ steps, children, onComplete, canNext = () => true, fin
           </li>
         ))}
       </ol>
+      <div className="mb-6 h-1.5 overflow-hidden rounded-full bg-muted" role="progressbar" aria-valuenow={i + 1} aria-valuemax={steps.length}>
+        <motion.div className="h-full rounded-full bg-primary" animate={{ width: `${((i + 1) / steps.length) * 100}%` }} transition={{ duration: 0.4 }} />
+      </div>
       <AnimatePresence mode="wait">
         <motion.div key={i} initial={{ opacity: 0, x: 24 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -24 }} transition={{ duration: 0.25 }}>{panes[i]}</motion.div>
       </AnimatePresence>

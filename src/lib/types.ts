@@ -40,6 +40,7 @@ export interface Product {
   name: string;
   description: string;
   imageUrl: string;
+  createdAt?: string;
   brand: { name: string; tone: string; colors: string[]; target: string };
   style: { format: string; durationSeconds: number; platform: Platform };
 }

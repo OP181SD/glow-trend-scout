@@ -1,9 +1,8 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
-import { ArrowRight } from "lucide-react";
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
+import { ArrowRight, Folder, Plus } from "lucide-react";
 import { Aurora, BlurText, CountUp, FadeContent } from "@/components/reactbits";
 import { Button } from "@/components/ui/button";
-import { VideoCard } from "@/components/VideoCard";
-import { useStore } from "@/lib/store";
+import { setState, useStore } from "@/lib/store";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -21,6 +20,7 @@ export const Route = createFileRoute("/")({
 
 function Dashboard() {
   const s = useStore();
+  const navigate = useNavigate();
   const allVideos = Object.values(s.videos).flat();
   const views = allVideos.reduce((a, v) => a + v.views, 0);
   const metrics = [
@@ -51,17 +51,51 @@ function Dashboard() {
           <p className="mt-4 text-sm text-muted-foreground">Vues cumulées des vidéos repérées : <CountUp to={views} className="text-foreground" /></p>
         )}
 
-        <div className="mt-14 flex items-end justify-between border-b border-dashed pb-4">
-          <h2 className="text-2xl font-bold">Dernières vidéos repérées</h2>
-          <Link to="/top-videos" className="text-sm text-primary">Tout voir</Link>
+        <div className="mt-14 grid gap-10 lg:grid-cols-[1.4fr_1fr]">
+          <section>
+            <div className="flex items-end justify-between border-b border-dashed pb-4">
+              <h2 className="text-2xl font-bold">Mes produits</h2>
+              <Button asChild size="sm" variant="outline" className="rounded-full"><Link to="/produits"><Plus /> Nouveau produit</Link></Button>
+            </div>
+            {s.products.length === 0 ? (
+              <p className="mt-6 text-muted-foreground">Aucun produit pour l'instant.</p>
+            ) : (
+              <ul className="divide-y divide-dashed">
+                {s.products.map((p, i) => (
+                  <FadeContent key={p.id} delay={i * 0.05}>
+                    <li>
+                      <button onClick={() => { setState((st) => ({ ...st, activeProductId: p.id })); navigate({ to: "/top-videos" }); }} className="flex w-full items-center gap-4 py-4 text-left hover:text-primary">
+                        {p.imageUrl ? <img src={p.imageUrl} alt="" className="h-11 w-11 rounded-xl object-cover" /> : <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-muted"><Folder className="h-4 w-4 text-primary" /></span>}
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate font-medium">{p.name}</span>
+                          <span className="block truncate text-sm text-muted-foreground">{p.brand.name || "Sans marque"}</span>
+                        </span>
+                        <span className="font-mono text-xs text-muted-foreground">{p.createdAt ? new Date(p.createdAt).toLocaleDateString("fr-FR") : "—"}</span>
+                      </button>
+                    </li>
+                  </FadeContent>
+                ))}
+              </ul>
+            )}
+          </section>
+          <section>
+            <h2 className="border-b border-dashed pb-4 text-2xl font-bold">Dernières recherches</h2>
+            {s.searches.length === 0 ? (
+              <p className="mt-6 text-muted-foreground">Aucune recherche encore.</p>
+            ) : (
+              <ul className="divide-y divide-dashed">
+                {s.searches.slice(0, 6).map((r, i) => (
+                  <FadeContent key={r.id} delay={i * 0.05}>
+                    <li className="py-4">
+                      <p className="line-clamp-2 text-sm">{r.query}</p>
+                      <p className="mt-1 font-mono text-xs text-muted-foreground">{r.count} vidéos · {new Date(r.createdAt).toLocaleString("fr-FR", { dateStyle: "short", timeStyle: "short" })}</p>
+                    </li>
+                  </FadeContent>
+                ))}
+              </ul>
+            )}
+          </section>
         </div>
-        {allVideos.length === 0 ? (
-          <p className="mt-6 text-muted-foreground">Rien encore. Créez votre premier produit pour lancer la recherche.</p>
-        ) : (
-          <div className="mt-6 grid grid-cols-2 gap-4 md:grid-cols-4">
-            {allVideos.slice(0, 4).map((v, i) => <FadeContent key={v.id + i} delay={i * 0.06}><VideoCard v={v} /></FadeContent>)}
-          </div>
-        )}
       </div>
     </div>
   );

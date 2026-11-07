@@ -65,7 +65,7 @@ function TopVideos() {
     <div className="mx-auto max-w-6xl px-6 py-12 md:px-10">
       <p className="text-sm text-muted-foreground">Dossier · {product.name}</p>
       <div className="mt-2 flex flex-wrap items-end justify-between gap-4 border-b border-dashed pb-6">
-        <BlurText text="Top vidéos concurrentes" className="text-5xl font-bold tracking-tight" />
+        <BlurText text="Résultats" className="text-5xl font-bold tracking-tight" />
         <div className="flex gap-1.5">
           {(["all", "tiktok", "instagram", "youtube"] as const).map((p) => (
             <button key={p} onClick={() => setFilter(p)} className={cn("inline-flex items-center gap-1.5 rounded-full border border-dashed px-3 py-1.5 text-sm", filter === p ? "border-solid border-primary bg-primary/15" : "text-muted-foreground")}>
