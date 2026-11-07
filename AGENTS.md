@@ -36,3 +36,4 @@ use the editor.
 - Scoring is pure and tested in `src/lib/scoring.ts`. Why: ranking rule must stay verifiable.
 - Claude calls go through the built-in AI gateway SDK, only in `src/lib/claude.server.ts`; AI server functions are in `src/lib/ai.functions.ts`. Why: no provider key needed, model swappable in one place.
 - AI system prompts live as plain text in `src/prompts/*.system.txt` (imported with `?raw`). Why: editable without touching code.
+- Demo mode: client `demoMode` flag is passed to `searchVideos`; demo reads `pinned` rows (saved via "Enregistrer pour la démo") before latest rows, and analyses prefer stored ones. Why: reliable jury demo without Oriane.

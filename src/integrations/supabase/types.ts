@@ -19,18 +19,21 @@ export type Database = {
           created_at: string
           data: Json
           id: string
+          pinned: boolean
           video_id: string
         }
         Insert: {
           created_at?: string
           data: Json
           id?: string
+          pinned?: boolean
           video_id: string
         }
         Update: {
           created_at?: string
           data?: Json
           id?: string
+          pinned?: boolean
           video_id?: string
         }
         Relationships: []
@@ -79,6 +82,7 @@ export type Database = {
           created_at: string
           data: Json
           id: string
+          pinned: boolean
           platform: string | null
           query: string
           source: string
@@ -87,6 +91,7 @@ export type Database = {
           created_at?: string
           data?: Json
           id?: string
+          pinned?: boolean
           platform?: string | null
           query: string
           source?: string
@@ -95,6 +100,7 @@ export type Database = {
           created_at?: string
           data?: Json
           id?: string
+          pinned?: boolean
           platform?: string | null
           query?: string
           source?: string
@@ -106,6 +112,7 @@ export type Database = {
           created_at: string
           data: Json
           id: string
+          pinned: boolean
           platform: string | null
           query: string | null
           score: number | null
@@ -115,6 +122,7 @@ export type Database = {
           created_at?: string
           data: Json
           id: string
+          pinned?: boolean
           platform?: string | null
           query?: string | null
           score?: number | null
@@ -124,6 +132,7 @@ export type Database = {
           created_at?: string
           data?: Json
           id?: string
+          pinned?: boolean
           platform?: string | null
           query?: string | null
           score?: number | null

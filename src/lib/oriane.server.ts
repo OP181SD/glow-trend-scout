@@ -68,7 +68,7 @@ export function normalizeOriane(r: OrianeResult): RawVideo | null {
 }
 
 export async function searchOriane(input: OrianeSearchInput): Promise<RawVideo[]> {
-  let baseUrl = process.env["ORIANE_API_URL"]?.replace(/\s+/g, "");
+  let baseUrl: string = process.env["ORIANE_API_URL"]?.replace(/\s+/g, "") ?? "";
   const apiKey = process.env["ORIANE_API_KEY"]?.trim();
   if (!baseUrl || !apiKey) throw new Error("Oriane non configuré");
   if (!/^https?:\/\//.test(baseUrl)) baseUrl = `https://${baseUrl}`;
@@ -78,7 +78,18 @@ export async function searchOriane(input: OrianeSearchInput): Promise<RawVideo[]
     throw new Error("ORIANE_API_URL n'est pas une adresse valide");
   }
 
-  const term = input.query.trim().slice(0, 200);
+  // Oriane cherche l'expression exacte : une phrase entière ne trouve rien.
+  // On essaie la requête complète, puis son début (« Crème anti-âge »), puis ses 2 premiers mots.
+  const full = input.query.trim().toLowerCase().slice(0, 200);
+  const head = full.split(/[,.;:!?()]| au | aux | avec | pour | à base | de \d/i)[0]!.trim();
+  const terms = [...new Set([full, head, head.split(/\s+/).slice(0, 2).join(" ")])].filter((t) => t.length >= 3);
+  for (const t of terms) {
+    const found = await fetchTerm(t);
+    if (found.length) return found;
+  }
+  return [];
+
+  async function fetchTerm(term: string): Promise<RawVideo[]> {
   const body = {
     operator: "and",
     filters: {
@@ -112,4 +123,5 @@ export async function searchOriane(input: OrianeSearchInput): Promise<RawVideo[]
   }
   const json = (await res.json()) as { data?: { results?: OrianeResult[] } };
   return (json.data?.results ?? []).map(normalizeOriane).filter((v): v is RawVideo => v !== null);
+  }
 }

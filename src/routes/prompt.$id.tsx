@@ -5,7 +5,7 @@ import { ArrowLeft, Check, Copy, RefreshCw } from "lucide-react";
 import { BlurText, FadeContent, ShinyText } from "@/components/reactbits";
 import { Button } from "@/components/ui/button";
 import { Message, MessageAction, MessageActions, MessageContent } from "@/components/ui/message";
-import { generate, getAnalysis } from "@/lib/api";
+import { generate } from "@/lib/api";
 import { setState, useStore } from "@/lib/store";
 
 export const Route = createFileRoute("/prompt/$id")({
@@ -28,7 +28,6 @@ function PromptPage() {
   const hydrated = useHydrated();
   const [copied, setCopied] = useState(false);
   const [regen, setRegen] = useState(false);
-  const [variant, setVariant] = useState(1);
 
   if (!hydrated) return null;
   const g = s.generations.find((x) => x.id === id);
@@ -44,8 +43,14 @@ function PromptPage() {
   async function regenerate() {
     if (!g || !product) return;
     setRegen(true);
-    const result = await generate(product, g.videos.map((video) => ({ video, analysis: getAnalysis(video.id, video)! })), r.targetTool, variant);
-    setVariant((v) => v + 1);
+    let result;
+    try {
+      result = await generate(product, g.videos, r.targetTool, s.demoMode);
+    } catch {
+      setRegen(false);
+      toast.error("La régénération a échoué.", { description: "Réessayez dans un instant." });
+      return;
+    }
     setState((st) => ({ ...st, generations: st.generations.map((x) => (x.id === g.id ? { ...x, result, createdAt: new Date().toISOString() } : x)) }));
     setRegen(false);
     toast.success("Nouvelle version générée");

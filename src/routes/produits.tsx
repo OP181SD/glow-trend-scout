@@ -7,8 +7,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { search } from "@/lib/api";
-import { setState } from "@/lib/store";
+import { toast } from "sonner";
+import { search, SearchFailed } from "@/lib/api";
+import { getState, setState } from "@/lib/store";
 import type { Platform, Product } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
@@ -76,7 +77,19 @@ function AddProduct() {
   async function finish() {
     setLoading(true);
     const product = { ...p, createdAt: new Date().toISOString() };
-    const videos = await search(product);
+    let videos;
+    try {
+      ({ videos } = await search(product, { demo: getState().demoMode }));
+    } catch (e) {
+      setLoading(false);
+      const demoOn = getState().demoMode;
+      toast.error(e instanceof SearchFailed ? e.message : "La recherche a échoué.", {
+        description: demoOn ? "Aucune vidéo enregistrée pour la démo." : "Passez en mode démo pour utiliser les vidéos déjà enregistrées.",
+        duration: 12000,
+        ...(demoOn ? {} : { action: { label: "Passer en mode démo", onClick: () => { setState((st) => ({ ...st, demoMode: true })); void finish(); } } }),
+      });
+      return;
+    }
     setState((st) => ({
       ...st,
       products: [product, ...st.products],
