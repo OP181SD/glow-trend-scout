@@ -70,7 +70,7 @@ function GenerationPage() {
             {product.imageUrl && <img src={product.imageUrl} alt="" className="h-16 w-16 rounded-2xl object-cover" />}
             <div><p className="text-lg font-bold">{product.name}</p><p className="mt-1 text-sm text-muted-foreground">{product.description}</p></div>
           </div>
-          <p className="mt-4 border-t border-dashed pt-4 text-sm">{product.style.format} · <span className="font-mono">{product.style.durationSeconds} s</span> · {platformLabel[product.style.platform]}</p>
+          <p className="mt-4 border-t border-dashed pt-4 text-sm">{product.style.format} · <span className="font-mono">{product.style.durationSeconds} s</span> · {product.style.platform ? platformLabel[product.style.platform] : "Toutes plateformes"}</p>
         </FadeContent>
         <FadeContent delay={0.08} className="rounded-[1.75rem] border border-dashed bg-card p-6">
           <p className="text-xs uppercase tracking-wider text-muted-foreground">Marque</p>
