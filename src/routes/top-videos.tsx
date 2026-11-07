@@ -6,6 +6,8 @@ import { ArrowRight, BarChart3, Columns3, Info, Loader2, Save } from "lucide-rea
 import { BlurText, FadeContent } from "@/components/reactbits";
 import { PlatformIcon, platformLabel } from "@/components/PlatformIcon";
 import { VideoCard } from "@/components/VideoCard";
+import { FilterPanel } from "@/components/FilterPanel";
+import { defaultFilters, matches, type Filters } from "@/lib/filters";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -35,6 +37,7 @@ function TopVideos() {
   const hydrated = useHydrated();
   const [filter, setFilter] = useState<Platform | "all">("all");
   const [saving, setSaving] = useState(false);
+  const [filters, setFilters] = useState<Filters>(defaultFilters);
   const [sort, setSort] = useState<"trend" | "score">("trend");
   // Tendance des vues calculée sur toute la recherche, pas sur le filtre affiché.
   const momentum = useMemo(() => {
@@ -55,7 +58,7 @@ function TopVideos() {
   }
   const all = s.videos[product.id];
   const picked = s.inspirations[product.id] ?? [];
-  const list = (all ?? []).filter((v) => filter === "all" || v.platform === filter)
+  const list = (all ?? []).filter((v) => (filter === "all" || v.platform === filter) && matches(v, filters))
     .sort((a, b) => sort === "trend" ? trendScore(b) - trendScore(a) : b.score - a.score);
 
   async function saveDemo() {
@@ -118,10 +121,12 @@ function TopVideos() {
         )}
       </div>
 
+      {all && all.length > 0 && <FilterPanel value={filters} onChange={setFilters} shown={list.length} total={all.length} />}
+
       {!all ? <SkeletonGrid /> : list.length === 0 ? (
         <div className="mt-10 rounded-[2rem] border border-dashed p-10 text-center">
           <p className="text-lg font-medium">Aucune vidéo trouvée</p>
-          <p className="mt-1 text-sm text-muted-foreground">{filter === "all" ? "Reformulez la description." : `Rien sur ${platformLabel[filter]}.`}</p>
+          <p className="mt-1 text-sm text-muted-foreground">{filter === "all" ? "Assouplissez les filtres ou reformulez." : `Rien sur ${platformLabel[filter]}.`}</p>
         </div>
       ) : (
         <TooltipProvider delayDuration={150}>
