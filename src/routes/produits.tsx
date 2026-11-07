@@ -35,7 +35,7 @@ const DURATIONS = [15, 30, 60];
 const blank = (): Product => ({
   id: crypto.randomUUID(), name: "", description: "", imageUrl: "",
   brand: { name: "", tone: "", colors: [], target: "" },
-  style: { format: "UGC", durationSeconds: 30, platform: "tiktok" },
+  style: { format: "UGC", durationSeconds: 30 },
 });
 
 const example = (id: string): Product => ({
