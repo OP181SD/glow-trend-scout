@@ -84,7 +84,7 @@ function AnalysePage() {
         </blockquote>
 
         <dl className="mt-8 grid grid-cols-2 gap-4 border-y border-dashed py-5 md:grid-cols-4">
-          {metrics.map((m) => <div key={m.label}><dt className="text-xs text-muted-foreground">{m.label}</dt><dd className="mt-1 text-2xl">{m.node}</dd></div>)}
+          {metrics.map((m) => <div key={m.label}><dt className="text-xs text-muted-foreground">{m.label}</dt><dd className="mt-1 text-xl xl:text-2xl">{m.node}</dd></div>)}
         </dl>
 
         <FadeContent className="mt-8 grid gap-8 md:grid-cols-2">

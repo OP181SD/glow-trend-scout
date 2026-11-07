@@ -4,7 +4,7 @@ import { codeToHtml } from "shiki"
 
 export type CodeBlockProps = {
   children?: React.ReactNode
-  className?: string
+  className?: string | undefined
 } & React.HTMLProps<HTMLDivElement>
 
 function CodeBlock({ children, className, ...props }: CodeBlockProps) {
