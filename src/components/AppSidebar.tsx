@@ -33,7 +33,7 @@ export function AppSidebar() {
       <div className="mb-8 flex items-center justify-between px-2 pt-2">
         <Link to="/" className="flex items-center gap-2">
           <span className="flex h-9 w-9 items-center justify-center rounded-2xl bg-primary text-primary-foreground"><Sparkles className="h-4 w-4" /></span>
-          <span className="text-lg font-bold tracking-tight">Ads inspirées</span>
+          <span className="text-lg font-bold tracking-tight">TrendMe</span>
         </Link>
         <button onClick={() => setOpen(false)} aria-label="Ranger le menu" className="rounded-full p-2 text-muted-foreground hover:bg-sidebar-accent hover:text-foreground"><PanelLeftClose className="h-4 w-4" /></button>
       </div>
