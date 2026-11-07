@@ -9,7 +9,7 @@ export const fmt = (n: number) => new Intl.NumberFormat("fr-FR", { notation: "co
 
 interface Props {
   v: Video;
-  format?: string;
+  format?: string | undefined;
   selected?: boolean;
   onClick?: () => void;
   inspiration?: { checked: boolean; disabled: boolean; onToggle: () => void };
