@@ -4,6 +4,7 @@ import { OrbitHero } from "@/components/OrbitHero";
 import { BlurText, CountUp, FadeContent } from "@/components/reactbits";
 import { Button } from "@/components/ui/button";
 import { setState, useStore } from "@/lib/store";
+import logoTrendme from "@/assets/logo-trendme-color.png";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -33,7 +34,7 @@ function Dashboard() {
   return (
     <div className="relative">
       <OrbitHero>
-        <p className="text-sm font-bold uppercase tracking-[0.3em]">TrendMe</p>
+        <img src={logoTrendme} alt="TrendMe" width={1152} height={576} className="mx-auto h-10 w-auto md:h-12" />
         <BlurText text="Votre espace d'inspiration vidéo" className="mt-4 max-w-xl justify-center text-5xl font-medium leading-[1.02] tracking-tight md:text-7xl" />
         <FadeContent delay={0.4}>
           <div className="mt-8 flex items-center justify-center gap-2">
