@@ -83,8 +83,33 @@ export function buildPrompt(product: Product, inspirations: { video: Video; anal
   };
 }
 
+const aiCache = new Map<string, Promise<Analysis>>();
+
+/** Analyse par Claude (mise en cache) ; retombe sur l'analyse heuristique si l'IA échoue. */
+export function analyzeWithAI(video: Video, product: Product | null): Promise<Analysis> {
+  const fallback = () => getAnalysis(video.id, video)!;
+  if (!product || MOCK_ANALYSES[video.id]) return Promise.resolve(fallback());
+  const key = `${product.id}:${video.id}`;
+  let p = aiCache.get(key);
+  if (!p) {
+    p = import("./ai.functions")
+      .then(({ analyzeVideo }) => analyzeVideo({ data: { video, product } }))
+      .catch(() => { aiCache.delete(key); return fallback(); });
+    aiCache.set(key, p);
+  }
+  return p;
+}
+
 export async function generate(product: Product, inspirations: { video: Video; analysis: Analysis }[], tool: TargetTool, variant = 0): Promise<GeneratedPrompt> {
-  await wait(1600);
   if (inspirations.length === 0) throw new Error("Choisissez au moins une inspiration");
-  return buildPrompt(product, inspirations, tool, variant);
+  const withAI = await Promise.all(inspirations.map(async (i) => ({ video: i.video, analysis: await analyzeWithAI(i.video, product) })));
+  const base = buildPrompt(product, withAI, tool, variant);
+  try {
+    const { generateAdPrompt } = await import("./ai.functions");
+    const out = await generateAdPrompt({ data: { product, analyses: withAI.map((i) => i.analysis), tool } });
+    return { ...base, prompt: out.prompt, kept: out.kept, original: out.original };
+  } catch {
+    await wait(600);
+    return base;
+  }
 }

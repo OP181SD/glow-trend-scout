@@ -34,3 +34,5 @@ use the editor.
 - Video search runs as a TanStack server function (`src/lib/search.functions.ts`), not a Supabase Edge Function. Why: this stack forbids new Edge Functions; keys stay server-side.
 - Database tables are server-only (RLS on, no anon/authenticated policies); the app reads/writes them through server functions. Why: the app has no sign-in yet.
 - Scoring is pure and tested in `src/lib/scoring.ts`. Why: ranking rule must stay verifiable.
+- All Anthropic (Claude) API knowledge lives only in `src/lib/claude.server.ts`; AI server functions are in `src/lib/ai.functions.ts`. Why: key stays server-side and provider is swappable.
+- AI system prompts live as plain text in `src/prompts/*.system.txt` (imported with `?raw`). Why: editable without touching code.
