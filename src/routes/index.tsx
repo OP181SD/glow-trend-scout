@@ -9,7 +9,7 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       { title: "Dashboard — Ads inspirées" },
-      { name: "description", content: "Suivez vos produits, les vidéos concurrentes analysées et vos prompts vidéo IA générés." },
+      { name: "description", content: "Suivez vos recherches, les vidéos concurrentes analysées et vos prompts vidéo IA générés." },
       { property: "og:title", content: "Dashboard — Ads inspirées" },
       { property: "og:description", content: "Vos pubs vidéo inspirées des meilleures, en un coup d'œil." },
       { property: "og:type", content: "website" },
@@ -25,7 +25,7 @@ function Dashboard() {
   const allVideos = Object.values(s.videos).flat();
   const views = allVideos.reduce((a, v) => a + v.views, 0);
   const metrics = [
-    { label: "Produits", value: s.products.length },
+    { label: "Recherches", value: s.products.length },
     { label: "Vidéos trouvées", value: allVideos.length },
     { label: "Analyses", value: s.analyses },
     { label: "Générations", value: s.generations.length },
@@ -58,7 +58,7 @@ function Dashboard() {
         <div className="mt-14 grid gap-10 lg:grid-cols-[1.4fr_1fr]">
           <section>
             <div className="flex items-end justify-between border-b border-dashed pb-4">
-              <h2 className="text-2xl font-bold">Mes produits</h2>
+              <h2 className="text-2xl font-bold">Mes recherches</h2>
               <Button asChild size="sm" variant="outline" className="rounded-full"><Link to="/produits"><Plus /> Trouver des inspirations</Link></Button>
             </div>
             {s.products.length === 0 ? (

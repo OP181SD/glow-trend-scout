@@ -74,7 +74,7 @@ function AnalysePage() {
 
   function addInspiration() {
     if (!v) return;
-    if (!product) { toast.error("Sélectionnez d'abord un produit"); return; }
+    if (!product) { toast.error("Lancez d'abord une recherche"); return; }
     if (!toggleInspiration(product.id, v.id)) toast.error(`${MAX_INSPIRATIONS} inspirations maximum`);
     else toast.success(checked ? "Retirée des inspirations" : "Ajoutée aux inspirations");
   }
@@ -91,7 +91,7 @@ function AnalysePage() {
     <div className="grid min-h-screen lg:grid-cols-[minmax(0,1fr)_420px]">
       {/* Centre */}
       <div className="px-6 py-10 md:px-10">
-        <Button asChild variant="ghost" className="-ml-3 mb-6 rounded-full"><Link to="/top-videos"><ArrowLeft /> Top vidéos</Link></Button>
+        <Button asChild variant="ghost" className="-ml-3 mb-6 rounded-full"><Link to="/top-videos"><ArrowLeft /> Inspirations</Link></Button>
         <div className="flex items-center gap-4">
           <Avatar className="h-14 w-14"><AvatarFallback className="bg-primary/20 text-lg text-primary">{v.creator.name.slice(0, 2).toUpperCase()}</AvatarFallback></Avatar>
           <div>

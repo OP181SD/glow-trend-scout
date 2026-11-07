@@ -1,13 +1,13 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { Folder, FolderOpen, LayoutDashboard, Package, PlaySquare, Plus, Sparkles } from "lucide-react";
+import { Folder, FolderOpen, LayoutDashboard, PlaySquare, Search, Plus, Sparkles } from "lucide-react";
 import { setState, useStore } from "@/lib/store";
 import { cn } from "@/lib/utils";
 import { Switch } from "@/components/ui/switch";
 
 const NAV = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/produits", label: "Produits", icon: Package },
-  { to: "/top-videos", label: "Top vidéos", icon: PlaySquare },
+  { to: "/produits", label: "Rechercher", icon: Search },
+  { to: "/top-videos", label: "Inspirations", icon: PlaySquare },
   { to: "/generations", label: "Générations", icon: Sparkles },
 ] as const;
 
@@ -30,7 +30,7 @@ export function AppSidebar() {
       </nav>
       <div className="my-5 border-t border-dashed" />
       <div className="mb-2 flex items-center justify-between px-4">
-        <span className="text-xs uppercase tracking-widest text-muted-foreground">Mes produits</span>
+        <span className="text-xs uppercase tracking-widest text-muted-foreground">Mes recherches</span>
         <Link to="/produits" aria-label="Trouver des inspirations" className="text-muted-foreground hover:text-primary"><Plus className="h-4 w-4" /></Link>
       </div>
       <div className="min-h-0 flex-1 space-y-1 overflow-y-auto">

@@ -16,9 +16,9 @@ import { cn } from "@/lib/utils";
 export const Route = createFileRoute("/top-videos")({
   head: () => ({
     meta: [
-      { title: "Top vidéos de marques et concurrents — Ads inspirées" },
-      { name: "description", content: "Les vidéos TikTok, Instagram et YouTube de marques et concurrents qui performent, analysées pour votre produit." },
-      { property: "og:title", content: "Top vidéos de marques et concurrents — Ads inspirées" },
+      { title: "Vidéos qui cartonnent — Ads inspirées" },
+      { name: "description", content: "Les vidéos TikTok, Instagram et YouTube de marques et concurrents qui performent, analysées pour vous." },
+      { property: "og:title", content: "Vidéos qui cartonnent — Ads inspirées" },
       { property: "og:description", content: "Les vidéos de marques et concurrents qui marchent, et pourquoi." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -39,7 +39,7 @@ function TopVideos() {
   if (!product) {
     return (
       <div className="mx-auto max-w-3xl px-6 py-20 text-center">
-        <BlurText text="Aucun produit sélectionné" className="text-4xl font-bold" />
+        <BlurText text="Aucune recherche" className="text-4xl font-bold" />
         <p className="mt-3 text-muted-foreground">Choisissez un dossier ou lancez une recherche.</p>
         <Button asChild className="mt-6 rounded-full"><Link to="/produits">Trouver des inspirations</Link></Button>
       </div>
@@ -67,7 +67,7 @@ function TopVideos() {
     <div className="mx-auto max-w-6xl px-6 py-12 md:px-10">
       <p className="text-sm text-muted-foreground">Dossier · {product.name}</p>
       <div className="mt-2 flex flex-wrap items-end justify-between gap-4 border-b border-dashed pb-6">
-        <BlurText text="Top vidéos de marques et concurrents" className="text-5xl font-bold tracking-tight" />
+        <BlurText text="Vidéos qui cartonnent" className="text-5xl font-bold tracking-tight" />
         <div className="flex gap-1.5">
           {(["all", "tiktok", "instagram", "youtube"] as const).map((p) => (
             <button key={p} onClick={() => setFilter(p)} className={cn("inline-flex items-center gap-1.5 rounded-full border border-dashed px-3 py-1.5 text-sm", filter === p ? "border-solid border-primary bg-primary/15" : "text-muted-foreground")}>

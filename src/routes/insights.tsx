@@ -59,7 +59,7 @@ function InsightsPage() {
 
   return (
     <div className="mx-auto max-w-6xl px-6 py-12 md:px-10">
-      <Button asChild variant="ghost" className="-ml-3 mb-6 rounded-full"><Link to="/top-videos"><ArrowLeft /> Top vidéos</Link></Button>
+      <Button asChild variant="ghost" className="-ml-3 mb-6 rounded-full"><Link to="/top-videos"><ArrowLeft /> Inspirations</Link></Button>
       <p className="text-sm text-muted-foreground">Dossier · {product.name}</p>
       <BlurText text="Insights de la recherche" className="mt-2 text-5xl font-bold tracking-tight" />
       <p className="mt-3 text-sm text-muted-foreground">« Meilleures vidéos » = la moitié du haut du classement (<span className="font-mono">{r.topCount}</span> sur <span className="font-mono">{videos.length}</span>).</p>
