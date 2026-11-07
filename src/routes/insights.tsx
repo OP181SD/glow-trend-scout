@@ -87,7 +87,7 @@ function InsightsPage() {
         <ShareChart title="Formats" data={r.formats} />
         <ShareChart title="Plateformes" data={r.platforms} />
       </div>
-      <p className="mt-6 text-sm text-muted-foreground">Classement basé sur les vues et l'engagement public, pas sur les performances publicitaires.</p>
+      <p className="mt-6 text-sm text-muted-foreground">Classement basé sur les vues, l'engagement public et l'attraction (vues ÷ abonnés), pas sur les performances publicitaires.</p>
     </div>
   );
 }

@@ -82,7 +82,8 @@ function AnalysePage() {
   const metrics = [
     { label: "Vues", node: <CountUp to={v.views} /> },
     { label: "Engagement", node: <CountUp to={v.engagementRate} decimals={1} suffix="%" /> },
-    { label: "Score", node: <><CountUp to={v.score} /><span className="text-muted-foreground">/100</span></> },
+    { label: "Attraction", node: v.creator.followers > 0 ? <CountUp to={v.views / v.creator.followers} decimals={1} suffix="×" /> : <span className="font-mono">—</span> },
+    { label: "Score créa", node: <><CountUp to={v.score} /><span className="text-muted-foreground">/100</span></> },
     { label: "Date", node: <span className="font-mono">{new Date(v.publishedAt).toLocaleDateString("fr-FR")}</span> },
   ];
 

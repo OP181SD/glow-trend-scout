@@ -21,8 +21,8 @@ describe("score", () => {
   it("1M views from a 10k account beats 1M views from a 20M account", () => {
     const res = scoreVideos([base("big", "tiktok", 1_000_000, 5, 20_000_000), base("small", "tiktok", 1_000_000, 5, 10_000)]);
     expect(res[0]!.id).toBe("small");
-    expect(res[0]!.score).toBe(65); // 0.5×1 + 0.3×0.5 + 0.2×0.5
-    expect(res[1]!.score).toBe(15);
+    expect(res[0]!.score).toBe(75); // 0.5×1 + 0.3×0.5 + 0.2×0.5
+    expect(res[1]!.score).toBe(25);
   });
   it("views per follower and tiers", () => {
     expect(viewsPerFollower(base("a", "tiktok", 1_000_000, 0, 10_000))).toBe(100);
