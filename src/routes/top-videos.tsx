@@ -6,16 +6,22 @@ import { PlatformIcon, platformLabel } from "@/components/PlatformIcon";
 import { VideoCard } from "@/components/VideoCard";
 import { Button } from "@/components/ui/button";
 import { analyze, generate } from "@/lib/api";
-import { activeProduct, setState, useStore } from "@/lib/store";
+import { activeProduct, MAX_INSPIRATIONS, setState, toggleInspiration, useStore } from "@/lib/store";
+import { MOCK_ANALYSES } from "@/lib/mock-data";
+import { Skeleton } from "@/components/ui/skeleton";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import { useHydrated } from "@tanstack/react-router";
+import { toast } from "sonner";
+import { Info } from "lucide-react";
 import type { Analysis, Platform, TargetTool, Video } from "@/lib/types";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/top-videos")({
   head: () => ({
     meta: [
-      { title: "Top vidéos — Ads inspirées" },
+      { title: "Top vidéos de marques et concurrents — Ads inspirées" },
       { name: "description", content: "Les vidéos TikTok, Instagram et YouTube concurrentes qui performent, analysées pour votre produit." },
-      { property: "og:title", content: "Top vidéos — Ads inspirées" },
+      { property: "og:title", content: "Top vidéos de marques et concurrents — Ads inspirées" },
       { property: "og:description", content: "Les vidéos concurrentes qui marchent, et pourquoi." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
@@ -34,6 +40,9 @@ function TopVideos() {
   const [loadingId, setLoadingId] = useState<string | null>(null);
   const [tool, setTool] = useState<TargetTool>("Veo");
   const [generating, setGenerating] = useState(false);
+  const hydrated = useHydrated();
+
+  if (!hydrated) return <div className="mx-auto max-w-6xl px-6 py-12 md:px-10"><Skeleton className="h-12 w-2/3 rounded-full" /><SkeletonGrid /></div>;
 
   if (!product) {
     return (
@@ -44,7 +53,9 @@ function TopVideos() {
       </div>
     );
   }
-  const list = (s.videos[product.id] ?? []).filter((v) => filter === "all" || v.platform === filter);
+  const all = s.videos[product.id];
+  const picked = s.inspirations[product.id] ?? [];
+  const list = (all ?? []).filter((v) => filter === "all" || v.platform === filter);
 
   async function pick(v: Video) {
     setLoadingId(v.id);
@@ -65,7 +76,7 @@ function TopVideos() {
     <div className="mx-auto max-w-6xl px-6 py-12 md:px-10">
       <p className="text-sm text-muted-foreground">Dossier · {product.name}</p>
       <div className="mt-2 flex flex-wrap items-end justify-between gap-4 border-b border-dashed pb-6">
-        <BlurText text="Résultats" className="text-5xl font-bold tracking-tight" />
+        <BlurText text="Top vidéos de marques et concurrents" className="text-5xl font-bold tracking-tight" />
         <div className="flex gap-1.5">
           {(["all", "tiktok", "instagram", "youtube"] as const).map((p) => (
             <button key={p} onClick={() => setFilter(p)} className={cn("inline-flex items-center gap-1.5 rounded-full border border-dashed px-3 py-1.5 text-sm", filter === p ? "border-solid border-primary bg-primary/15" : "text-muted-foreground")}>
@@ -73,6 +84,13 @@ function TopVideos() {
             </button>
           ))}
         </div>
+      </div>
+
+      <div className="mt-6 flex flex-wrap items-center justify-between gap-3">
+        <p className="inline-flex items-center gap-2 rounded-full border border-dashed px-4 py-2 text-sm text-muted-foreground">
+          <Info className="h-4 w-4 text-primary" /> Classement basé sur les vues et l'engagement public, pas sur les performances publicitaires.
+        </p>
+        {all && all.length > 0 && <p className="text-sm text-muted-foreground">Inspirations <span className="font-mono text-foreground">{picked.length}/{MAX_INSPIRATIONS}</span></p>}
       </div>
 
       {video && analysis && (
@@ -108,14 +126,27 @@ function TopVideos() {
         </FadeContent>
       )}
 
-      <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-        {list.map((v, i) => (
-          <FadeContent key={v.id} delay={i * 0.06} className="relative">
-            <VideoCard v={v} selected={video?.id === v.id} onClick={() => !loadingId && pick(v)} />
-            {loadingId === v.id && <div className="absolute inset-0 z-20 flex items-center justify-center rounded-[1.75rem] bg-ink/70"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>}
-          </FadeContent>
-        ))}
-      </div>
+      {!all ? <SkeletonGrid /> : list.length === 0 ? (
+        <div className="mt-10 rounded-[2rem] border border-dashed p-10 text-center">
+          <p className="text-lg font-medium">Aucune vidéo trouvée</p>
+          <p className="mt-1 text-sm text-muted-foreground">{filter === "all" ? "Essayez de reformuler la description du produit." : `Aucun résultat sur ${platformLabel[filter]}. Essayez une autre plateforme.`}</p>
+        </div>
+      ) : (
+        <TooltipProvider delayDuration={150}>
+          <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
+            {list.map((v, i) => {
+              const checked = picked.includes(v.id);
+              return (
+                <FadeContent key={v.id} delay={i * 0.06} className="relative">
+                  <VideoCard v={v} format={MOCK_ANALYSES[v.id]?.format} selected={video?.id === v.id} onClick={() => !loadingId && pick(v)}
+                    inspiration={{ checked, disabled: !checked && picked.length >= MAX_INSPIRATIONS, onToggle: () => { if (!toggleInspiration(product.id, v.id)) toast.error(`${MAX_INSPIRATIONS} inspirations maximum`); } }} />
+                  {loadingId === v.id && <div className="absolute inset-0 z-20 flex items-center justify-center rounded-[1.75rem] bg-ink/70"><Loader2 className="h-6 w-6 animate-spin text-primary" /></div>}
+                </FadeContent>
+              );
+            })}
+          </div>
+        </TooltipProvider>
+      )}
     </div>
   );
 }
@@ -125,6 +156,14 @@ function List({ title, items }: { title: string; items: string[] }) {
     <div>
       <p className="text-xs uppercase tracking-wider text-muted-foreground">{title}</p>
       <ol className="mt-1 space-y-1.5">{items.map((it, i) => <li key={i} className="flex gap-2"><span className="font-mono text-primary">{i + 1}</span>{it}</li>)}</ol>
+    </div>
+  );
+}
+
+function SkeletonGrid() {
+  return (
+    <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4" aria-label="Chargement des vidéos">
+      {Array.from({ length: 8 }).map((_, i) => <Skeleton key={i} className="aspect-[9/16] rounded-[1.75rem]" />)}
     </div>
   );
 }
